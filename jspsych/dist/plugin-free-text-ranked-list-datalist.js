@@ -298,7 +298,16 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
         add.addEventListener("click", function() // when the plus button is clicked
         {
             document.getElementById("jspsych-canvas-slider-response-next").disabled = true;
-            plus.innerHTML = '<li><form action=""><input type="text" id="inputText" placeholder=' + trial.add_button_prompt + '></input><span class="confirm" id="confirm">+</span></form></li>';
+            plus.innerHTML = `
+        <li>
+          <form action="">
+            <input type="text" id="inputText" list="suggestions" placeholder="${trial.add_button_prompt}">
+            <datalist id="suggestions">
+              ${trial.suggestion_list.map(item => `<option value="${item}">`).join('')}
+            </datalist>
+            <span class="confirm" id="confirm">+</span>
+          </form>
+        </li>`;
             var q_element = document.getElementById("inputText");
             display_element.querySelector(q_element.focus()); // add a new textbox when participants add the name of the element.
             q_element.onclick = function(e) {
@@ -308,10 +317,9 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
               q_element.select();
             };
             let confirm = document.getElementById("confirm"); // participant types the element and then clicks to add it to the list.
-            confirm.addEventListener("click", function()
-            {
+            confirm.addEventListener("click", function() {
               let val = (q_element.value).toUpperCase();
-              if (val.length > 1 && !list.includes(val)) // if they input a blank string or a single letter, do not add to list.
+              if (trial.suggestion_list.includes(val) && !list.includes(val)) // if they input a blank string or a single letter, do not add to list.
               {
                 list.push(val);
                 let sliderValues = [];
@@ -554,7 +562,16 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
           let add = document.getElementById("add");
           add.addEventListener("click", function() 
           {
-              plus.innerHTML = '<li><form action=""><input type="text" id="inputText" placeholder=' + trial.add_button_prompt + '></input><span class="confirm" id="confirm">+</span></form></li>';
+              plus.innerHTML = `
+              <li>
+                <form action="">
+                  <input type="text" id="inputText" list="suggestions" placeholder="${trial.add_button_prompt}">
+                  <datalist id="suggestions">
+                    ${trial.suggestion_list.map(item => `<option value="${item}">`).join('')}
+                  </datalist>
+                  <span class="confirm" id="confirm">+</span>
+                </form>
+              </li>`;
               var q_element = document.getElementById("inputText");
               display_element.querySelector(q_element.focus());
               q_element.onclick = function(e) {
@@ -568,7 +585,7 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
               confirm.addEventListener("click", function()
               {
                 let val = q_element.value;
-                if (val.length > 1)
+                if (trial.suggestion_list.includes(val))
                 {
                   plus.remove();
                   let newList = [];
