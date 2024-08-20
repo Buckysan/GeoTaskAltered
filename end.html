@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>End of Experiment</title>
+    <link rel="stylesheet" href="https://mjaquiery.github.io/jsPsych/css/jspsych.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <style type="text/css">
+        * {box-sizing: border-box;}
+        body {font-family: sans-serif; margin: 0;}
+        #banner {position: fixed; text-align: center; height: 6em; background: #002147; display: flex; width: 100%; font-weight: bold; color: white; min-width: 900px;}
+        #banner > .left {width: 15%; text-align: left; position: absolute; left: 0;}
+        #banner > .center {text-align: center; position: absolute; left: 15%; width: 50%;}
+        #banner > .right {background-color: white; position: absolute; left: 65%; width: 35%;}
+        #banner .middle {}
+        #panel {padding-top: 6em; text-align: center;}
+        #head {height: 5em;}
+        #title {font-size: 1.6em;}
+        #subtitle {font-size: 1.6em;}
+        #lastupdate {font-size: 1.1em;}
+        #window {background-color: white; text-align: left; padding-left: 1em; padding-right: 1em;}
+        #foot {min-height: 2em; border-top: 1px dotted #002147; padding: 1em;}
+        #oxLogo {}
+        #epLogo {}
+        section {}
+        span.lead {font-weight: bold;}
+        a {font-family: serif; text-decoration: none; color: #002147; font-weight: bold;}
+        a:hover {text-decoration: underline;}
+        a.link {}
+        a.mailto {}
+        div.missing {background-color: #002147; color: white; font-weight: bold;}
+        div.required {margin: 0.5em;}
+        img.logo {height: 6em;}
+        input.big {min-height: 2em; min-width: 2em; vertical-align: middle;}
+        input.submit {}
+        .right .logo {max-width: 45%;}
+    </style>
+</head>
+<body>
+    <div id="banner">
+        <div class="left">
+            <a href="https://www.ox.ac.uk/" target="_blank"><img id="oxLogo" class="logo" src="assets/oxweb-logo.gif" alt="University of Oxford"/></a>
+        </div>
+        <div class="center">
+            <div class="middle">
+                <section id="title">Investigating Diagnostic Decision Making</section>
+                <section id="subtitle">Thanks and Payment</section>
+                <section id="lastupdate">Updated 13 June 2022</section>
+            </div>
+        </div>
+        <div class="right">
+            <a href="https://www.oxacclab.org/" target="_blank"><img id="accLogo" class="logo" src="assets/acclab.jpg" alt="Attention and Cognitive Control Lab"/></a>
+            <a href="https://www.psy.ox.ac.uk/" target="_blank"><img id="epLogo" class="logo" src="assets/ep-logo-with-msd.jpg" alt="Department of Experimental Psychology"/></a>
+            <a href="https://www.oxstar.ox.ac.uk/" target="_blank"><img id="oxstarLogo" class="logo" src="assets/oxstar.png" alt="OxSTaR Centre"/></a>
+        </div>
+    </div>
+    <div id="panel">
+        <div id="window">
+            <section id="intro">
+                <p><span class="lead">THANK YOU</span> for participating in our study! At this point, we would like arrange the payment for this study. The payment for this study is at a rate of £10 per hour. <br> <br> You can choose whether to receive this payment for yourself or to donate this money to one of three charities (you can follow the links to read more about their work): <a href="https://www.redcross.org.uk/" target="_blank">The Red Cross</a>, <a href="https://www.helenanddouglas.org.uk/" target="_blank">Helen and Douglas House</a> or <a href="https://www.hospitalcharity.co.uk/" target="_blank">The Oxford Hospitals Charity</a>
+                <br><br> If you choose to receive the money, you will need to provide your name and email here so that we can follow up with you to arrange for a payment into your bank account. 
+                <br><br> If you choose for a charity to receive the money, you can simply indicate here which of these the above charities you would like the payment to go toward and we will arrange the rest!
+                <br> <br> In both cases, please allow up to a week for us to process your participation payment. If you do not hear from us after this time, do please email the researcher <a class="mailto" href="mailto:sriraj.aiyer@psy.ox.ac.uk?subject=Diagnosis Study Payment">Sriraj Aiyer [sriraj.aiyer@psy.ox.ac.uk]</a>
+                </p>
+            </section>
+    </div>
+    <div id="foot">
+            <form id="form" onsubmit="checkForm();return false">
+                <div id="charityDiv">
+                    Tick this box to donate your participation payment to charity. Leave blank if not.<input id="charity" class="big" type="checkbox"/>
+                </div>
+
+                <div id="donateto" hidden>
+                    I would like to donate my payment to:
+                </div>
+                <div id="redcross" style="padding-top: 1em;" hidden>
+                    Red Cross <input type="checkbox" id="redcrosscheck"/>
+                </div>
+                <div id="helenanddouglas" style="padding-top: 1em;" hidden>
+                    Helen and Douglas House <input type="checkbox" id="helenanddouglascheck"/>
+                </div>
+                <div id="oxfordhospitals" style="padding-top: 1em; padding-bottom: 1em" hidden>
+                    Oxford Hospitals Charity <input type="checkbox" id="oxfordhospitalscheck"/>
+                </div>
+
+                <div id="paymentReceive" style="padding-bottom: 1em" hidden>
+                    Please provide your full name and email to arrange for your study payment:
+                </div>
+                <div id="name" style="padding-bottom: 1em" hidden>
+                    First and last name
+                    <input type="text" id="nametext" size="20">
+                </div>
+                <div id="email" style="padding-bottom: 1em" hidden>
+                    Email address
+                    <input type="text" id="emailtext" size="20">
+                </div>
+
+                <div>
+                    <input class="big submit" id="submit" type="submit" value="Confirm"/>
+                </div>
+                <div id="error" style="color: red;" hidden>
+                    Please indicate a <strong> single </strong> charity that you would like to donate to.
+                </div>
+                <div id="emailerror" style="color: red;" hidden>
+                    Please provide a valid email address.
+                </div>
+            </form>
+                <div id="thankyou" hidden>
+                    Thank you for your participation! Your response has been recorded. You may close this window.
+                </div>
+        </div>
+</body>
+<script type="text/javascript">
+    function checkForm() {
+        // Have id to check this is a genuine request?
+        let charityChecked = document.getElementById("charity");
+        let button = document.getElementById("submit");
+        let participantID = window.location.search.match('[?&]ParticipantID=\\w+');
+        if(participantID !== null)
+        {
+            participantID = participantID[0].substring(15);
+
+            if (charityChecked.checked)
+            {
+                if (button.value == "Confirm")
+                {
+                    button.value = "Submit";
+
+                    let donateto = document.getElementById("donateto");
+                    let redCross = document.getElementById("redcross");
+                    let helenDouglas = document.getElementById("helenanddouglas");
+                    let oxfordHos = document.getElementById("oxfordhospitals");
+
+                    donateto.removeAttribute("hidden");
+                    redCross.removeAttribute("hidden");
+                    helenDouglas.removeAttribute("hidden");
+                    oxfordHos.removeAttribute("hidden");
+
+                    let charDiv = document.getElementById("charityDiv");
+                    charDiv.hidden = true;
+                    return
+                }
+                else
+                {
+                    let redCrossCheck = document.getElementById("redcrosscheck").checked;
+                    let helenDouglasCheck = document.getElementById("helenanddouglascheck").checked;
+                    let oxfordHosCheck = document.getElementById("oxfordhospitalscheck").checked;
+                    let checkArr = [redCrossCheck, helenDouglasCheck, oxfordHosCheck];
+                    let count = checkArr.filter(Boolean).length;
+                    if (count < 1 || count > 1)
+                    {
+                        let err = document.getElementById("error");
+                        err.hidden = false;
+                        return
+                    }
+                    else
+                    {
+                        let charityChoice = "";
+                        if (checkArr[0] == true)
+                        {   
+                            charityChoice = "Red Cross";
+                        }
+                        else if (checkArr[1] == true)
+                        {
+                            charityChoice = "Helen and Douglas House"
+                        }
+                        else
+                        {
+                            charityChoice = "Oxford Hospitals Charity"
+                        }
+                        let details = "ID: " + participantID + ", Donation: YES, Charity: " + charityChoice + "\r\n";
+                        fetch("./endSave.php",{method: "POST", body: details});
+                        let form = document.getElementById("form");
+                        form.hidden = true;
+                        let thanks = document.getElementById("thankyou");
+                        thanks.hidden = false;
+                    }
+                }
+            }
+            else
+            {
+                if (button.value == "Confirm")
+                {
+                    button.value = "Submit";
+
+                    let prompt = document.getElementById("paymentReceive");
+                    let name = document.getElementById("name");
+                    let email = document.getElementById("email");
+
+                    prompt.removeAttribute("hidden");
+                    name.removeAttribute("hidden");
+                    email.removeAttribute("hidden");
+
+                    let charDiv = document.getElementById("charityDiv");
+                    charDiv.hidden = true;
+                    return
+                }
+                else
+                {
+                    let name = document.getElementById("nametext").value;
+                    let email = document.getElementById("emailtext").value;
+                    console.log(name);
+                    console.log(email);
+
+                    var re = /\S+@\S+\.\S+/;
+                    const validateEmail = re.test(email);
+                    console.log(validateEmail);
+                    if (validateEmail)
+                    {
+                        let details = "Name: " + name + ", Email: " + email + ", Donation: NO" + "\r\n";
+                        fetch("./endSave.php",{method: "POST", body: details});
+                        let form = document.getElementById("form");
+                        form.hidden = true;
+                        let thanks = document.getElementById("thankyou");
+                        thanks.hidden = false;
+                    }
+                    else
+                    {
+                        let err = document.getElementById("emailerror");
+                        err.hidden = false;
+                        return;
+                    }
+
+                }
+            }
+        }
+    }
+</script>
+</html>

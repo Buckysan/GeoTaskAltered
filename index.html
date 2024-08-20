@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Country Experiment</title>
+    <!--title>
+          This experiment looks at information seeking and confidence in multi-stage decisions.
+    </title> -->
+    <script src="./src/utils.js"></script>
+    <script src="./src/nonMedScenarios.js"></script>
+    <script src="./src/scenarioFileTutorial.js"></script>
+    <script src="./src/src.js"></script>
+    <script type="text/javascript">
+        let participantID = window.location.search.match('[?&]ParticipantID=\\w+');
+
+        if (participantID !== null)
+        {
+            participantID = participantID[0].substring(15);
+        }
+        else
+        {
+            const chars = shuffle(["b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","z","1","2","3","4","5","6","7","8","9"]);
+            participantID = (chars.slice(1,7)).join('');
+        }
+
+        window.participantID = participantID;
+        // redirect if we don't have consent for participation
+        const active = true;
+        if (active)
+        {
+            let consent = window.location.search.match("[?&]consent=true");
+            if(consent === null) {
+                let redirectURL = "consent.html";
+                redirectURL += "?ParticipantID=" + participantID;
+                window.location.replace(redirectURL); // simulate redirect (no history)
+            }
+        }
+        else
+        {
+            let redirectURL = "pause.html";
+            window.location.replace(redirectURL); // simulate redirect (no history)
+        }
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="./jspsych/dist/jspsych.js" type="text/javascript"></script>
+    <script src="./jspsych/dist/plugin-image-button-response.js" type="text/javascript"></script>
+    <script src="./jspsych/dist/plugin-image-button-response-altered.js" type="text/javascript"></script>   
+    <script src="./jspsych/dist/plugin-instructions.js" type="text/javascript"></script>
+    <script src="./jspsych/dist/plugin-survey-multi-choice.js" type="text/javascript"></script>
+    <script src="./jspsych/dist/plugin-survey-multi-select.js" type="text/javascript"></script>
+    <script src="./jspsych/dist/plugin-survey-multi-select-limit-sliders.js" type="text/javascript"></script>
+    <script src="./jspsych/dist/plugin-survey-text.js" type="text/javascript"></script>
+    <script src="./jspsych/dist/plugin-canvas-slider-response.js" type="text/javascript"></script>
+    <script src="./jspsych/dist/plugin-canvas-slider-response-with-buttons.js" type="text/javascript"></script>
+    <script src="./jspsych/dist/plugin-free-text-ranked-list.js" type="text/javascript"></script>
+    <script src="./jspsych/dist/plugin-free-text-ranked-list-datalist.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="./style/styleIST.css"/>
+    <link rel="shortcut icon" href="#" />
+</head>
+<body class="jspsych-display-element" tabindex="0" style="margin: 0; height: 100%; width: 100%;">
+    <div class="jspsych-content-wrapper" style="height: 100vh;">
+        <div id="jspsych-content" class="jspsych-content">
+            <h1 id="initHeader">Loading...</h1>
+            <p id="initText">If you continue to see this message after around 10 seconds, something has gone wrong. In order to run
+                properly the experiment requires a modern browser with javascript enabled.</p>
+        </div>
+    </div>
+<script type="module">
+    // MAKE CHANGES BELOW
+    // You can control the whole program for here by changing the value
+    // of the parameters here.
+
+    const betaTest = false; // If true, only shows a single trial for testing purposes.
+    const doInstruct = true; // If true, shows instructions.
+    const doQuestionnaire = true; // If true, includes questionnaires. (Currently decision making styles and Big Five)
+    const demoQuestions = true; // If true, asks participants for age, gender and medical experience.
+    const doDebrief = true; // If true, run debrief questionnaire at the end.
+    const doFeedback = true; //If true, shows what the answers to each trial at the end of the experiment.
+    const timeLimit = false; // If true, set a time limit for participants before they are forced to make a decision.
+    const doDifficulty = true; //If true, ask participants at the end of each trial how difficult they found it.
+    const trialTime = 0; // If previous conditional is true, this is the amount of time (in seconds) allotted for each scenario.
+    const informationStages = true; // If true, present information in discrete stages. If false, present all information at once.
+    const numOfInformationStages = 3; // Number of stages that infomration is presented in. Only relevant if informationStages is true.
+    const pastInformationAvailable = true; // If true, at each information stage, all information from the previous stage is available to view. If false, only the current stage's information is available.
+    const randomiseOrder = true; // If true, shuffles the order of information shown on screen for each trial and information stage. If false, the order is fixed to the order in which information are shown in the scenario files.
+    const runTutorial = true; // If true, runs a tutorial for the experiment before the main trials.
+
+    //////////////
+    // Future additions (?): multiple cases interleaved, out of order information
+
+    const endRedirectURL = 'https://app.prolific.co/submissions/complete?cc=C17HY1DO'; //What URL to redirect to after the experiment.
+    
+    //let URL = "end.html";
+    //let ID = window.location.search.match('[?&]ParticipantID=\\w+');
+    //ID = ID[0].substring(15);
+    //URL += "?ParticipantID=" + ID;
+    //const endRedirectURL = URL; //What URL to redirect to after the experiment.
+
+    const sliderName = "Likelihood";
+    const sliderLabels = ["1","2","3","4","5","6","7","8","9","10"];
+    const scaleName = "";
+    //const scaleLabels = ["Not at All Concerned","Somewhat Concerned","Highly Concerned", "Emergency"];
+    const scaleLabels = [];
+    const confidenceLabels = ["Not At All Confident", "Fully Confident"]
+    const addButtonPrompt = "Enter the country that you want to add";
+    const scaleError = ""
+    const hypothesisCondition = 0 // 0: no working diagnosis, 1: initial hypothesis provided, 2: free hypothesis generation
+    const nonInformation = ["ID", "TrueCountry", "Prompt", "Suspected"];
+    const stopInfoSeekingButton = "ENTER COUNTRIES";
+    const endFeedback = "Thank you again for participating in our experiment. You have completed all trials! Below, you will find the correct countries for each trial:";
+    const confidenceMessage = "Record how confident you are that you have the right country in your list.";
+    const infoDelay = 500; //delay to receiving information, in ms.
+
+
+    ////////////////////////////////////////////
+    ////////////////////////////////////////////
+
+    const countryList = [
+    "Afghanistan",
+    "Albania",
+    "Algeria",
+    "Andorra",
+    "Angola",
+    "Antigua and Barbuda",
+    "Argentina",
+    "Armenia",
+    "Australia",
+    "Austria",
+    "Azerbaijan",
+    "Bahamas",
+    "Bahrain",
+    "Bangladesh",
+    "Barbados",
+    "Belarus",
+    "Belgium",
+    "Belize",
+    "Benin",
+    "Bhutan",
+    "Bolivia",
+    "Bosnia and Herzegovina",
+    "Botswana",
+    "Brazil",
+    "Brunei",
+    "Bulgaria",
+    "Burkina Faso",
+    "Burundi",
+    "Cabo Verde",
+    "Cambodia",
+    "Cameroon",
+    "Canada",
+    "Central African Republic",
+    "Chad",
+    "Chile",
+    "China",
+    "Colombia",
+    "Comoros",
+    "Congo, Democratic Republic of the",
+    "Congo, Republic of the",
+    "Costa Rica",
+    "Croatia",
+    "Cuba",
+    "Cyprus",
+    "Czech Republic",
+    "Denmark",
+    "Djibouti",
+    "Dominica",
+    "Dominican Republic",
+    "Ecuador",
+    "Egypt",
+    "El Salvador",
+    "Equatorial Guinea",
+    "Eritrea",
+    "Estonia",
+    "Eswatini",
+    "Ethiopia",
+    "Fiji",
+    "Finland",
+    "France",
+    "Gabon",
+    "Gambia",
+    "Georgia",
+    "Germany",
+    "Ghana",
+    "Greece",
+    "Grenada",
+    "Guatemala",
+    "Guinea",
+    "Guinea-Bissau",
+    "Guyana",
+    "Haiti",
+    "Honduras",
+    "Hungary",
+    "Iceland",
+    "India",
+    "Indonesia",
+    "Iran",
+    "Iraq",
+    "Ireland",
+    "Israel",
+    "Italy",
+    "Jamaica",
+    "Japan",
+    "Jordan",
+    "Kazakhstan",
+    "Kenya",
+    "Kiribati",
+    "Korea, North",
+    "Korea, South",
+    "Kosovo",
+    "Kuwait",
+    "Kyrgyzstan",
+    "Laos",
+    "Latvia",
+    "Lebanon",
+    "Lesotho",
+    "Liberia",
+    "Libya",
+    "Liechtenstein",
+    "Lithuania",
+    "Luxembourg",
+    "Madagascar",
+    "Malawi",
+    "Malaysia",
+    "Maldives",
+    "Mali",
+    "Malta",
+    "Marshall Islands",
+    "Mauritania",
+    "Mauritius",
+    "Mexico",
+    "Micronesia",
+    "Moldova",
+    "Monaco",
+    "Mongolia",
+    "Montenegro",
+    "Morocco",
+    "Mozambique",
+    "Myanmar",
+    "Namibia",
+    "Nauru",
+    "Nepal",
+    "Netherlands",
+    "New Zealand",
+    "Nicaragua",
+    "Niger",
+    "Nigeria",
+    "North Macedonia",
+    "Norway",
+    "Oman",
+    "Pakistan",
+    "Palau",
+    "Palestine",
+    "Panama",
+    "Papua New Guinea",
+    "Paraguay",
+    "Peru",
+    "Philippines",
+    "Poland",
+    "Portugal",
+    "Qatar",
+    "Romania",
+    "Russia",
+    "Rwanda",
+    "Saint Kitts and Nevis",
+    "Saint Lucia",
+    "Saint Vincent and the Grenadines",
+    "Samoa",
+    "San Marino",
+    "Sao Tome and Principe",
+    "Saudi Arabia",
+    "Senegal",
+    "Serbia",
+    "Seychelles",
+    "Sierra Leone",
+    "Singapore",
+    "Slovakia",
+    "Slovenia",
+    "Solomon Islands",
+    "Somalia",
+    "South Africa",
+    "South Sudan",
+    "Spain",
+    "Sri Lanka",
+    "Sudan",
+    "Suriname",
+    "Sweden",
+    "Switzerland",
+    "Syria",
+    "Taiwan",
+    "Tajikistan",
+    "Tanzania",
+    "Thailand",
+    "Timor-Leste",
+    "Togo",
+    "Tonga",
+    "Trinidad and Tobago",
+    "Tunisia",
+    "Turkey",
+    "Turkmenistan",
+    "Tuvalu",
+    "Uganda",
+    "Ukraine",
+    "United Arab Emirates",
+    "United Kingdom",
+    "United States",
+    "Uruguay",
+    "Uzbekistan",
+    "Vanuatu",
+    "Vatican City",
+    "Venezuela",
+    "Vietnam",
+    "Yemen",
+    "Zambia",
+    "Zimbabwe",
+    "Tibet",
+    "Catalonia",
+    "Northern Cyprus",
+    "Hong Kong",
+    "Puerto Rico",
+    "Lapland",
+];
+
+
+    let shuffledScenarios = shuffle(scenarios2); // load our scenarios from the scenario file and shuffle order.
+    if (betaTest)
+    {
+        shuffledScenarios = [shuffledScenarios[0]];
+    }
+    let scenarioOrder;
+    let buttons;
+    // let feedbackMessage = "";
+    let dateCompleted = Date.now();
+    let countries = [];
+    for (let i = 0; i < shuffledScenarios.length; i ++)
+    {
+         let condition = shuffledScenarios[i]["TrueCountry"];
+    //     feedbackMessage = feedbackMessage + "<p>" + endFeedback + "</p>" + "<p>Country " + (i+1) + ": " + condition;
+         for (let j = 0; j < numOfInformationStages; j ++)
+         {
+             countries.push(condition);
+         }
+    }
+
+    if (betaTest)
+    {
+        scenarioOrder = shuffledScenarios[0].id;
+    }
+    else
+    {
+        scenarioOrder = shuffledScenarios.map(function(a) {return a.ID;}); //record the order that participants see the scenarios 
+        scenarioOrder = scenarioOrder.join('');
+    }
+    buttons = shuffledScenarios[0]; // get the tests from the first scenario.
+    buttons = Object.keys(buttons); // note this only works if all scenarios have same buttons/tests/information requests
+    for (let n = 0; n < nonInformation.length; n++)
+    {
+        buttons.splice(buttons.indexOf(nonInformation[n]), 1);
+    }
+    buttons.push(stopInfoSeekingButton); // Add button to record list.
+
+    ////////////////////////////////////////////
+    ////////////////////////////////////////////
+
+
+    let numOfScenarios = shuffledScenarios.length;
+    var conditions = [];
+    let split;
+    if (betaTest)
+    {
+        conditions = ["Non-Directed"];
+    }
+    else
+    {
+       // conditions = Array(numOfScenarios/2).fill("Directed");
+      //  conditions.push(Array(numOfScenarios/2).fill("Non-Directed"));
+      //  conditions = conditions.flat();
+      //  conditions = shuffle(conditions);
+	   conditions = Array(numOfScenarios).fill("Non-Directed");
+    }
+    var startExperimentTime = Date.now();
+    let timeline = [];
+    const queryString = window.location.search;
+    var pid = queryString.split("ParticipantID=")[1]; // get participant ID from the URL
+
+
+    let exp = new Structure({ // main experiment object where we store data and then export for saving data.
+    	numOfTrials: numOfScenarios,
+        numOfSubtrials: numOfInformationStages,
+    	currentTrialIndex: 0,
+        currentSubtrialIndex: 0,
+    	completionURL: endRedirectURL,
+        timeStart: startExperimentTime,
+        scenarioObject: shuffledScenarios,
+        corrects: countries,
+        date: dateCompleted,
+        order: scenarioOrder,
+        expConditionOrder: conditions,
+        trialsCompleted: 0,
+        complete: false,
+        participantID: pid
+    });
+
+    const jsPsych = initJsPsych({ // initialise JSPsych
+      //preload_images: images,
+      show_preload_progress_bar: false,
+      on_finish: function(){
+        var endExperimentTime = Date.now();
+        var expTime = msToMinSec(endExperimentTime - startExperimentTime);
+        exp.exportGovernor();
+        window.location.replace(endRedirectURL);
+    }});
+    
+    const browserInstruct = {
+        type: jsPsychInstructions,
+        pages: ["<p>Please do not use the back or forward buttons on your browser during the experiment. Data on your performance will not save until the end of the experiment so do not close your browser unless you would no longer like to participate.</p>" + "<p>This study should take around half an hour, so please make sure you have enough time and are in a quiet place where you are unlikely to be interrupted.</p>" + "<p>Thank you for your cooperation!</p>" + "<p>Press Next to begin.</p>"],
+        show_clickable_nav: true,
+        allow_backward: false
+    };
+
+    const questionIntro = {
+        type: jsPsychInstructions,
+        pages: ["<p>Thank you for completing the main task! " +
+            "<p>For the final part of this experiment, you will be completing some questions about your decision making style and personality. Please answer these as honestly as possible.</p>" +
+            "<p>Click 'next' to proceed.</p>"],
+        show_clickable_nav: true,
+        allow_backward: false
+    }
+
+    const decisionQuestionnaire = 
+    {
+        type: jsPsychSurveyMultiChoice,
+        preamble: "The following questions relate to how you make decisions. Please rate the following statements from Strongly Disagree to Strongly Agree:",
+        questions:[
+            {name: "RationalInfo", prompt: "I prefer to gather all the necessary information before committing to a decision. ", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "RationalEval", prompt: "I thoroughly evaluate decision alternatives before making a final choice.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "RationalCont", prompt: "In decision making, I take time to contemplate the pros/cons or risks/benefits of a situation.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "RationalDecision", prompt: "Investigating the facts is an important part of my decision-making process.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "RationalWeigh", prompt: "I weigh a number of different factors when making decisions.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "IntuitiveGut", prompt: "When making decisions, I rely mainly on my gut feelings.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "IntuitiveHunch", prompt: "My initial hunch about decisions is generally what I follow.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "IntuitiveDecision", prompt: "I make decisions based on intuition.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "IntuitiveImpress", prompt: "I rely on my first impressions when making decisions.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "IntuitiveWeigh", prompt: "I weight feelings more than analysis in making decisions.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]}
+        ],
+        randomize_question_order: true,
+        button_label: "Submit",
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.saveDecisionQuestions(trial);
+            exp.exportGovernor();
+        }
+    }
+
+    const bigFiveQuestionnaire = 
+    {
+        type: jsPsychSurveyMultiChoice,
+        preamble: "For this survey, here are a number of characteristics that may or may not apply to you. For example, do you agree that you are someone who likes to spend time with others? Please rate each statement to indicate the extent to which you agree or disagree with that statement.",
+        questions:[
+            {name: "Talk", prompt: "I see myself as someone who is talkative.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Fault", prompt: "I see myself as someone who tends to find fault with others.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Thorough", prompt: "I see myself as someone who does a thorough job.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Blue", prompt: "I see myself as someone who is depressed, blue.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Orig", prompt: "I see myself as someone who is original, comes up with new ideas.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Reserved", prompt: "I see myself as someone who is reserved.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Help", prompt: "I see myself as someone who is helpful and unselfish with others.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Careless", prompt: "I see myself as someone who can be somewhat careless.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Relax", prompt: "I see myself as someone who is relaxed, handles stress well.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Curious", prompt: "I see myself as someone who is curious about many different things.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Energy", prompt: "I see myself as someone who is full of energy.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Quarrel", prompt: "I see myself as someone who starts quarrels with others.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Reliable", prompt: "I see myself as someone who is a reliable worker.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Tense", prompt: "I see myself as someone who can be tense.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Ingenious", prompt: "I see myself as someone who is ingenious, a deep thinker.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Enthusiastic", prompt: "I see myself as someone who generates a lot of enthusiasm.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Forgive", prompt: "I see myself as someone who has a forgiving nature.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Disorganise", prompt: "I see myself as someone who tends to be disorganised.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Worry", prompt: "I see myself as someone who worries a lot.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Active", prompt: "I see myself as someone who has an active imagination.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Quiet", prompt: "I see myself as someone who tends to be quiet.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Trusting", prompt: "I see myself as someone who is generally trusting.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Lazy", prompt: "I see myself as someone who tends to be lazy.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Stable", prompt: "I see myself as someone who is emotionally stable, not easily upset.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Inventive", prompt: "I see myself as someone who is inventive.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Assertive", prompt: "I see myself as someone who has an assertive personality.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Cold", prompt: "I see myself as someone who can be cold and aloof.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Persevere", prompt: "I see myself as someone who perseveres until the task is finished.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Moody", prompt: "I see myself as someone who can be moody.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Art", prompt: "I see myself as someone who values artistic, aesthetic experiences.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Shy", prompt: "I see myself as someone who is sometimes shy, inhibited.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Considerate", prompt: "I see myself as someone who is considerate and kind to almost everyone.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Efficient", prompt: "I see myself as someone who does things efficiently.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Calm", prompt: "I see myself as someone who remains calm in tense situations.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Routine", prompt: "I see myself as someone who prefers work that is routine.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Sociable", prompt: "I see myself as someone who is outgoing, sociable.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Rude", prompt: "I see myself as someone who is sometimes rude to others.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Plan", prompt: "I see myself as someone who makes plans and follows through with them.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Nervous", prompt: "I see myself as someone who gets nervous easily.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Ideas", prompt: "I see myself as someone who likes to reflect, play with ideas.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Artistic", prompt: "I see myself as someone who has few artistic interests.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Cooperate", prompt: "I see myself as someone who likes to cooperate with others.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Distract", prompt: "I see myself as someone who is easily distracted.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+            {name: "Lit", prompt: "I see myself as someone who is sophisticated in art, music or literature.", required: true, horizontal: true, options: ["Disagree Strongly", "Disagree a little", "Neither agree nor disagree", "Agree a little", "Agree Strongly"]},
+
+        ],
+        randomize_question_order: true,
+        button_label: "Submit",
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.saveBigFiveQuestions(trial);
+            exp.exportGovernor();
+        }
+    }
+
+    const welcome = {
+        type: jsPsychInstructions,
+         pages: [
+             "<p>Thank you again for participating in this study! " +
+             "<p>During the main task, you will trying to identify a country based on a set of information you receive about it. As each trial progresses, you will record which countries you are considering at that point in time. Your performance will be assessed not only on the getting the right country but also the number of pieces of information you request. <strong style='font-size: larger;'>Hence, only request information that you will think will be helpful to you in identifying the country.</strong></p>" + 
+             "<p>You will start with a sample trial as a tutorial for this study." +
+            "<p>Click 'next' to proceed.</p>"
+        ],
+        show_clickable_nav: true,
+        allow_backward: false,
+        on_load: ()=>exp.fullscreenMode(),
+        on_finish: (trial)=>{
+            exp.fullscreenMode();
+        }
+    };
+
+    const demoQuestionnaire = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: 'Please input your age', required: true},
+        {prompt: 'Please input your gender', required: true}
+      ],
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+           exp.saveQuestionnaire(trial);
+        }
+    }
+
+    const caseIntro = {
+        type: jsPsychInstructions,
+        pages: ["<p>For this trial: " + exp.getCaseIntro()],
+        show_clickable_nav: true,
+        allow_backward: false,
+        on_load: ()=>exp.fullscreenMode(),
+        on_finish: (trial)=>{
+            exp.fullscreenMode();
+        }
+    }
+
+    const tutorialCase = {
+        type: jsPsychImageButtonResponse,
+        stimulus: '',
+        choices: buttons,
+        response_ends_trial: false,
+        scenarioObject: tutorialScenario,
+        endButton: stopInfoSeekingButton,
+        prompt: "<p>Below you will find a series of information that you can request.</p><p>Information is split into three stages: Geography, Economy & Politics and People & Culture. To start with, only Geography is available to view. Click on Geography to view the available information. Clicking on each will reveal that information on screen for the country you are trying to guess. </p><p> When you are done seeking information and ready to record the countries you think it could be, click on ENTER COUNTRIES.",
+        shuffle_buttons: randomiseOrder,
+        button_delay: infoDelay,
+        on_load: ()=>{  
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.fullscreenMode();
+        }
+    }
+
+    const infoSeeking = {
+        type: jsPsychImageButtonResponse,
+        stimulus: '',
+    	choices: buttons,
+    	response_ends_trial: false,
+    	scenarioObject: exp.currentSubtrial.trialInfoSet,
+    	prompt: "<p>Click a button to gather information or click ENTER COUNTRIES to report your final answer.</p>",
+        shuffle_buttons: randomiseOrder,
+        endButton: stopInfoSeekingButton,
+        button_delay: infoDelay,
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.saveInfoSeeking(trial);
+        }
+    }
+
+    const confidence = {
+        type: jsPsychCanvasSliderResponseWithButtons,
+        stimulus: '',
+        labels: confidenceLabels,
+        require_movement: true,
+        prompt: "<p>" + confidenceMessage + "</p>",
+        response_ends_trial: true,
+        text_prompt: "",
+        text_placeholder: "",
+        text_rows: 10,
+        text_columns: 30,
+        text_name: "",
+        scale_label: "",
+        hide_checkbox: true,
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.saveConfidence(trial);
+            exp.exportGovernor();
+        }
+    }
+
+    // const confidenceTreatment = {
+    //     type: jsPsychCanvasSliderResponseWithButtons,
+    //     stimulus: '',
+    //     labels: confidenceLabels,
+    //     require_movement: true,
+    //     prompt: "<p>"+ confidenceMessage + "</p>",
+    //     response_ends_trial: true,
+    //     text_prompt: "Record your treatment plan below.",
+    //     text_placeholder: "Input your treatment plan (eg what further tests you would run, any advice or documentation you would seek)",
+    //     text_rows: 10,
+    //     text_columns: 30,
+    //     text_name: "TreatmentPlan",
+    //     scale_label: "Ready to Treat",
+    //     hide_checkbox: false,
+    //     on_load: ()=>{
+    //         exp.fullscreenMode();
+    //     },
+    //     on_finish: (trial)=>{
+    //         exp.saveConfidence(trial);
+    //         exp.exportGovernor();
+    //     }
+    // }
+
+    const confidenceTutorial = {
+        type: jsPsychCanvasSliderResponseWithButtons,
+        stimulus: '',
+        labels: confidenceLabels,
+        require_movement: true,
+        prompt: "<p>Once you have recorded your country list, you should indicate using the slider how confident you are that you have the correct country in your list.</p><p>It is fine to not be very confident yet! Make sure that you are recording your confidence as accurately as possible: try not to be overconfident or underconfident. You will not be able to proceed until you indicate your confidence.</p>",
+        response_ends_trial: true,
+        text_prompt: "",
+        text_placeholder: "",
+        text_rows: 10,
+        text_columns: 30,
+        text_name: "",
+        scale_label: "",
+        hide_checkbox: true,
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.fullscreenMode();
+        }
+    }
+
+    const perceivedDifficulty = {
+        type: jsPsychCanvasSliderResponse,
+        stimulus: '',
+        labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+        require_movement: false,
+        prompt: "<p>On a scale from 1 (trivial) to 10 (impossible), how hard did you find it to determine the correct country?</p>",
+        min: 1,
+        max: 10,
+        step: 1,
+        slider_start: 5,
+        response_ends_trial: true,
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.saveDifficulty(trial);
+            exp.exportGovernor();
+        }
+    }
+
+    const differentials = 
+    {
+    	type: jsPsychFreeTextRankedListDatalist,
+    	prompt: "<p>Input your list of countries</p>",
+        slider_labels: sliderLabels,
+        slider_start: 5,
+        slider_prompt: sliderName,
+        slider_width:200,
+        scale_questions: false,
+        scale_labels: scaleLabels,
+        scale_prompt: scaleName,
+        add_button_prompt: addButtonPrompt,
+        blank_scale_error: scaleError,
+        draggable_list: false,
+        suggestion_list: countryList,
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.saveDifferentials(trial)
+            exp.exportGovernor();
+        }
+    }
+
+    const differentialsTutorial = 
+    {
+        type: jsPsychFreeTextRankedListDatalist,
+        prompt: "<p><strong style='font-size: larger;'>AAt the end of each information stage, you will record a list of ALL COUNTRIES that you are currently thinking of.</strong></p><p>Click the plus icon to add a country to the list. Once you type in the country, click the plus again or Enter on your keyboard. For each country, you will record how how likely that country is on a scale of 1-10.</p><p>Now try adding some countries and put as many guesses as you can! Once you are done with your list, click Continue. Make sure that you have provided your likelihood for all countries before doing so.</p>",
+        slider_labels: sliderLabels,
+        slider_start: 5,
+        slider_prompt: sliderName,
+        slider_width:200,
+        scale_questions: false,
+        scale_labels: scaleLabels,
+        scale_prompt: scaleName,
+        add_button_prompt: addButtonPrompt,
+        blank_scale_error: scaleError,
+        draggable_list: false,
+        suggestion_list: countryList,
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.fullscreenMode();
+        }
+    }
+
+    const debrief = {
+        type: jsPsychSurveyText,
+        preamble: "You have completed all the trials! Please take some time to answer a few final questions.",
+        questions:[
+            {name: "Hypothesis", prompt: "What do you think this study was investigating?", required: true, rows: 10,columns: 50},
+            {name: "DiagnosticApproach", prompt: "What is your general approach to making decisions with lots of potential options?", required: true, rows: 10, columns: 50}
+        ],
+        button_label: "Finish",
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.saveDebrief(trial);
+            exp.exportGovernor();
+        }
+    }
+
+    const preTutorialInstruct = {
+        type: jsPsychInstructions,
+         pages: [
+             '<p>We will present you with a series of trials, whereby you will gather information about a country. Your goal is to guess the country that the information is hinting at.</p><p><strong style="font-size: larger;">You will be told the correct country at the end of each trial, so PLEASE do not look up any information whilst doing the task. You will not receive any reward for getting the country correct, just the satisfaction of getting it right! Again, looking things up will ruin the data we get so please avoid doing so!</strong></p><p>You will start with an example trial, which will follow the same procedure as the main trials. Your performance is not being recorded for this example trial, as this is to allow you to familiarise yourself with the experiment flow and how the interface works.</p>'
+        ],
+        show_clickable_nav: true,
+        allow_backward: false,
+        on_load: ()=>exp.fullscreenMode(),
+        on_finish: (trial)=>{
+            exp.fullscreenMode();
+        }
+    };
+
+    const postTutorialInstruct = {
+        type: jsPsychInstructions,
+         pages: [
+             "<p>You have completed the tutorial trial!  The correct country was <strong>THAILAND</strong>. Feel free to take a short break before proceeding to the main experiment. There will be " + numOfScenarios + " countries to guess. They will vary in difficulty, so do your best to report your list of possible guesses and report your confidence accurately.</p><p>One final tip: <strong style='font-size: larger;'>Only request information that you think will be hepful to you in guessing the correct country. Your performance is based on using as little information as possible.</strong></p><p>Click Next to begin the experiment.</p>"
+        ],
+        show_clickable_nav: true,
+        allow_backward: false,
+        on_load: ()=>exp.fullscreenMode(),
+        on_finish: (trial)=>{
+            exp.fullscreenMode();
+        }
+    };
+
+    // const showFeedback = {
+    //     type: jsPsychInstructions,
+    //     pages: [
+    //     feedbackMessage
+    //     ],
+    //     show_clickable_nav: true,
+    //     allow_backward: false,
+    //     on_load: ()=>exp.fullscreenMode(),
+    //     on_finish: (trial)=>{
+    //         exp.fullscreenMode();
+    //     }
+    // };
+
+    let tutorialTrial;
+    let trial;
+
+    timeline.push(browserInstruct);
+    if (demoQuestions)
+    {
+        timeline.push(demoQuestionnaire);
+    }
+
+    timeline.push(welcome);
+
+    // Define the tutorial 
+    // We run through an example trial and add extra text to guide participants through the interface/paradigm.
+    if (runTutorial)
+    {
+        tutorialTrial = [];
+        let currentButtons = buttons;
+        currentButtons.pop();
+
+        //////////////////////////////////////////////
+        // STAGE 1
+        let stageButtons = []
+        if (pastInformationAvailable)
+        {
+            stageButtons = currentButtons.slice(0,1);
+        }
+        else
+        {
+            stageButtons = currentButtons[0]
+        }
+        stageButtons.push(stopInfoSeekingButton);
+        var tutorialStage1 = {
+            type: jsPsychImageButtonResponseAltered,
+            stimulus: '',
+            choices: stageButtons,
+            response_ends_trial: false,
+            scenarioObject: tutorialScenario,
+            endButton: stopInfoSeekingButton,
+            prompt: "<p>Above you will find a series of information that you can request.</p><p>Information is split into three stages: Geography, Economy & Politics and People & Culture. To start with, only Geography is available to view. Click on Geography to view the available information requests. Clicking on each will reveal that information on screen. The information will take a little while to load. </p><p> When you are done seeking information and ready to record your guesses for the country, click on ENTER COUNTRIES.</p>",
+            shuffle_buttons: randomiseOrder,
+            button_delay: infoDelay,
+            required_clicks: 2,
+            on_load: () => {
+                exp.fullscreenMode();
+            },
+            on_finish: (trial)=>{
+                exp.fullscreenMode();
+            }
+        }
+
+        tutorialTrial.push(tutorialStage1);
+        tutorialTrial.push(differentialsTutorial);
+        tutorialTrial.push(confidenceTutorial);
+
+        //////////////////////////////////////////////
+        // STAGE 2
+        if (pastInformationAvailable)
+        {
+            stageButtons = currentButtons.slice(0,2);
+        }
+        else
+        {
+            stageButtons = currentButtons[1]
+        }
+        stageButtons.push(stopInfoSeekingButton);
+        var tutorialStage2 = {
+            type: jsPsychImageButtonResponseAltered,
+            stimulus: '',
+            choices: stageButtons,
+            response_ends_trial: false,
+            scenarioObject: tutorialScenario,
+            endButton: stopInfoSeekingButton,
+            prompt: "<p>You will now find that the next stage of information, <strong>Economy & Politics</strong>, is available to view. Click there to view the available information requests. You can also go back to remind yourself of information about the Geography of the country. </p><p> When you are done seeking information and ready to record your current guesses for the country, click on ENTER COUNTRIES.</p>",
+            shuffle_buttons: randomiseOrder,
+            button_delay: infoDelay,
+            on_load: ()=>{
+                exp.fullscreenMode();
+            },
+            on_finish: (trial)=>{
+                exp.fullscreenMode();
+            }
+        }
+        tutorialTrial.push(tutorialStage2);
+
+        var differentialsTutorialStage2 = {
+            type: jsPsychFreeTextRankedList,
+            prompt: "<p>You will notice that your country from the first stage has been saved for you to now update given the extra information received via the Geography of the country.</p><p> As before, you can add countries to the list using the plus icon.</p><p> <strong>If a country is no longer under consideration, you can use the cross icon on the right of the country to remove it from the list. Make sure to update your country list in the light of the new information you have received!</strong> </p>",
+            slider_labels: sliderLabels,
+            slider_start: 5,
+            slider_prompt: sliderName,
+            slider_width:200,
+            scale_questions: false,
+            scale_labels: scaleLabels,
+            scale_prompt: scaleName,
+            add_button_prompt: addButtonPrompt,
+            blank_scale_error: scaleError,
+            start_empty: false,
+            starting_list: function(){
+                let array = jsPsych.data.get().last(3);
+                return array.trials[0].response
+            },
+            starting_sliders: function(){
+                let array = jsPsych.data.get().last(3);
+                return array.trials[0].sliderValues
+            },
+            starting_scales: function(){
+                let array = jsPsych.data.get().last(3);
+                return array.trials[0].scaleValues
+            },
+            on_load: ()=>{
+                exp.fullscreenMode();
+            },
+            on_finish: (trial)=>{
+                exp.fullscreenMode();
+            }
+        }
+        tutorialTrial.push(differentialsTutorialStage2);
+        tutorialTrial.push(confidenceTutorial);
+
+        //////////////////////////////////////////////
+        // STAGE 3
+        if (pastInformationAvailable)
+        {
+            stageButtons = currentButtons.slice(0,3);
+        }
+        else
+        {
+            stageButtons = currentButtons[2]
+        }
+        stageButtons.push(stopInfoSeekingButton);
+        var tutorialStage3 = {
+            type: jsPsychImageButtonResponse,
+            stimulus: '',
+            choices: stageButtons,
+            response_ends_trial: false,
+            scenarioObject: tutorialScenario,
+            endButton: stopInfoSeekingButton,
+            prompt: "<p>People & Culture is now available, as well as the information from the previous two infomation stages.</p><p>This is the final stage of information gathering.</p><p>For each trial, you will have no limit to how much information you can gather. However, <strong> only request a piece of information if you believe it to be important for making your decision.<p> Your performance will be better if you request only necessary tests. When you are done seeking information and ready to record guesses for the country, click on ENTER COUNTRIES.</p>",
+            shuffle_buttons: randomiseOrder,
+            button_delay: infoDelay,
+            on_load: ()=>{
+                exp.fullscreenMode();
+            },
+            on_finish: (trial)=>{
+                exp.fullscreenMode();
+            }
+        }
+        tutorialTrial.push(tutorialStage3);
+
+        var differentialsTutorialStage3 = {
+                    type: jsPsychFreeTextRankedList,
+                    prompt: "<p>This is your last chance to record guesses for the country. You can record multiple countries even at this stage.</p><p><strong>Record ANY countries that you are considering. Even if they are a remote possiblity, please record them.</strong></p>",
+                    slider_labels: sliderLabels,
+                    slider_start: 5,
+                    slider_prompt: sliderName,
+                    slider_width:200,
+                    scale_questions: false,
+                    scale_labels: scaleLabels,
+                    scale_prompt: scaleName,
+                    add_button_prompt: addButtonPrompt,
+                    blank_scale_error: scaleError,
+                    start_empty: false,
+                    starting_list: function(){
+                        let array = jsPsych.data.get().last(3);
+                        return array.trials[0].response
+                    },
+                    starting_sliders: function(){
+                        let array = jsPsych.data.get().last(3);
+                        return array.trials[0].sliderValues
+                    },
+                    starting_scales: function(){
+                        let array = jsPsych.data.get().last(3);
+                        return array.trials[0].scaleValues
+                    },
+                    on_load: ()=>{
+                        exp.fullscreenMode();
+                    },
+                    on_finish: (trial)=>{
+                        exp.fullscreenMode();
+                    }
+        }
+        tutorialTrial.push(differentialsTutorialStage3);
+
+        const confidenceTutorialStage3 = {
+            type: jsPsychCanvasSliderResponseWithButtons,
+            stimulus: '',
+            labels: confidenceLabels,
+            require_movement: true,
+            prompt: "<p>You can record your final confidence here. As before, you can record your confidence using the slider</p>",
+            response_ends_trial: true,
+            text_prompt: "Record your treatment plan below.",
+            text_placeholder: "Input your treatment plan (eg what further tests you would run, any advice or documentation you would seek)",
+            text_rows: 10,
+            text_columns: 30,
+            text_name: "TreatmentPlan",
+            scale_label: "Ready to Treat",
+            hide_checkbox: true,
+            on_load: ()=>{
+                exp.fullscreenMode();
+            },
+            on_finish: (trial)=>{
+                exp.fullscreenMode();
+            }
+        }
+        tutorialTrial.push(confidenceTutorialStage3);
+
+        timeline.push(preTutorialInstruct);
+        timeline.push({timeline: tutorialTrial});
+        timeline.push(postTutorialInstruct);
+    }
+
+    //trial.unshift(caseIntro);
+
+
+    for (let x = 0; x < numOfScenarios; x++)
+    {
+        var currentCaseIntro = {
+            type: jsPsychInstructions,
+            pages: ["<p>For this trial: " + shuffledScenarios[x].Prompt],
+            show_clickable_nav: true,
+            allow_backward: false,
+            on_load: ()=>exp.fullscreenMode(),
+            on_finish: (trial)=>{
+                exp.fullscreenMode();
+            }
+        }
+        timeline.push(currentCaseIntro);
+        if (informationStages)
+        {
+            trial = [];
+            let currentButtons = buttons;
+           // currentButtons.pop();
+            for (let i = 1;i<numOfInformationStages+1;i++)
+            {
+                let stageButtons = []
+                if (pastInformationAvailable)
+                {
+                    stageButtons = currentButtons.slice(0,i);
+                }
+                else
+                {
+                    stageButtons = currentButtons[i-1]
+                }
+                stageButtons.push(stopInfoSeekingButton);
+                var infoSeekingStage = {
+                    type: jsPsychImageButtonResponse,
+                    stimulus: '',
+                    choices: stageButtons,
+                    response_ends_trial: false,
+                    scenarioObject: shuffledScenarios[x],
+                    endButton: stopInfoSeekingButton,
+                    prompt: "<p>Click a button to gather information or click ENTER COUNTRIES to report your final answer.</p>",
+                    shuffle_buttons: randomiseOrder,
+                    button_delay: infoDelay,
+                    on_load: ()=>{
+                        exp.showCaseNumber();
+                        exp.fullscreenMode();
+                    },
+                    on_finish: (trial)=>{
+                        exp.saveInfoSeeking(trial);
+                    }
+                }
+                trial.push(infoSeekingStage);
+                if (i==1)
+                {
+                    trial.push(differentials);
+                }
+                else
+                {
+                    var differentialsStage = {
+                        type: jsPsychFreeTextRankedList,
+                        prompt: "<p><strong>Update your list of countries</strong></p>",
+                        slider_labels: sliderLabels,
+                        slider_start: 5,
+                        slider_prompt: sliderName,
+                        slider_width:200,
+                        scale_questions: false,
+                        scale_labels: scaleLabels,
+                        scale_prompt: scaleName,
+                        add_button_prompt: addButtonPrompt,
+                        blank_scale_error: scaleError,
+                        start_empty: false,
+                        starting_list: function(){ // We need to load the differentials, slider and scale values from last subtrial/stage.
+                            let array = jsPsych.data.get().last(3);
+                            return array.trials[0].response
+                        },
+                        starting_sliders: function(){
+                            let array = jsPsych.data.get().last(3);
+                            return array.trials[0].sliderValues
+                        },
+                        starting_scales: function(){
+                            let array = jsPsych.data.get().last(3);
+                            return array.trials[0].scaleValues
+                        },
+                        on_load: ()=>{
+                            exp.showCaseNumber();
+                            exp.fullscreenMode();
+                        },
+                        on_finish: (trial)=>{
+                            exp.saveDifferentials(trial)
+                            exp.exportGovernor();
+                        }
+                    }
+                    trial.push(differentialsStage);
+                }
+
+                trial.push(confidence);
+            }
+        }   
+        else
+        {
+            trial = [infoSeeking, differentials, finalDecision, confidence];
+        }
+    	timeline.push({timeline: trial});
+        if (doDifficulty)
+        {
+            timeline.push(perceivedDifficulty);
+        }
+
+        // SHOW FEEDBACK
+
+        let feedbackMessage = "<p> The correct country was: ";
+        let country = shuffledScenarios[x]["TrueCountry"];
+        feedbackMessage = feedbackMessage + country;
+        let showFeedback = {
+	        type: jsPsychInstructions,
+	        pages: [
+	        feedbackMessage
+	        ],
+	        show_clickable_nav: true,
+	        allow_backward: false,
+	        on_load: ()=>exp.fullscreenMode(),
+	        on_finish: (trial)=>{
+	            exp.fullscreenMode();
+	        }
+	    };
+	    timeline.push(showFeedback);
+    }
+
+    //if (doFeedback)
+    //{
+
+     //   timeline.push(showFeedback);
+    //}
+    
+    if (doDebrief)
+    {
+        timeline.push(debrief);
+    }
+
+    if (doQuestionnaire)
+    {
+        timeline.push(questionIntro);
+        timeline.push(decisionQuestionnaire);
+        timeline.push(bigFiveQuestionnaire);
+    }
+
+    jsPsych.run(timeline);
+
+</script>
+</body>
+</html>

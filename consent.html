@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Consent Form</title>
+    <link rel="stylesheet" href="https://mjaquiery.github.io/jsPsych/css/jspsych.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <style type="text/css">
+        * {box-sizing: border-box;}
+        body {font-family: sans-serif; margin: 0;}
+        #banner {position: fixed; text-align: center; height: 6em; background: #002147; display: flex; width: 100%; font-weight: bold; color: white; min-width: 900px;}
+        #banner > .left {width: 15%; text-align: left; position: absolute; left: 0;}
+        #banner > .center {text-align: center; position: absolute; left: 15%; width: 50%;}
+        #banner > .right {background-color: white; position: absolute; left: 65%; width: 35%;}
+        #banner .middle {}
+        #panel {padding-top: 6em; text-align: center;}
+        #head {height: 5em;}
+        #title {font-size: 1.6em;}
+        #subtitle {font-size: 1.6em;}
+        #lastupdate {font-size: 1.1em;}
+        #window {background-color: white; text-align: left; padding-left: 1em; padding-right: 1em;}
+        #foot {min-height: 2em; border-top: 1px dotted #002147; padding: 1em;}
+        #oxLogo {}
+        #epLogo {}
+        section {}
+        span.lead {font-weight: bold;}
+        a {font-family: serif; text-decoration: none; color: #002147; font-weight: bold;}
+        a:hover {text-decoration: underline;}
+        a.link {}
+        a.mailto {}
+        div.missing {background-color: #002147; color: white; font-weight: bold;}
+        div.required {margin: 0.5em;}
+        img.logo {height: 6em;}
+        input.big {min-height: 2em; min-width: 2em; vertical-align: middle;}
+        input.submit {}
+        .right .logo {max-width: 45%;}
+    </style>
+</head>
+<body>
+    <div id="banner">
+        <div class="left">
+            <a href="https://www.ox.ac.uk/" target="_blank"><img id="oxLogo" class="logo" src="assets/oxweb-logo.gif" alt="University of Oxford"/></a>
+        </div>
+        <div class="center">
+            <div class="middle">
+                <section id="title">Investigating Decision Making</section>
+                <section id="subtitle">Participant Information and Consent Form</section>
+                <section id="lastupdate">Updated 03 October 2022</section>
+            </div>
+        </div>
+        <div class="right">
+            <a href="https://www.oxacclab.org/" target="_blank"><img id="accLogo" class="logo" src="assets/acclab.jpg" alt="Attention and Cognitive Control Lab"/></a>
+            <a href="https://www.psy.ox.ac.uk/" target="_blank"><img id="epLogo" class="logo" src="assets/ep-logo-with-msd.jpg" alt="Department of Experimental Psychology"/></a>
+            <a href="https://www.oxstar.ox.ac.uk/" target="_blank"><img id="oxstarLogo" class="logo" src="assets/oxstar.png" alt="OxSTaR Centre"/></a>
+        </div>
+    </div>
+    <div id="panel">
+        <div id="window">
+            <section id="intro">
+                <p><span class="lead">Invitation to Take Part</span> We would like to invite you to take part in a research project. This document provides some information to help you decide whether to do so. Please take time to read this information carefully and consider whether you wish to take part. If there is anything that you do not understand, or if you would like more information, please ask us. Thank you for your consideration.</p>
+            </section>
+            <section id="purpose">
+                <p><span class="lead">What is the purpose of the study?</span> We are interested in how individuals gather information when making decisions. We intend to investigate this using a computer-based task where you will be provided with information to guess a country in the world. You will be asked to use the information provided to make your best judgement by choosing options using the computer mouse. Our anonymised data recordings are only intended for research purposes and will be not used for other purposes.</p>
+            </section>
+            <section id="why">
+                <p><span class="lead">Why have I been invited?</span> You have been invited to take part in this research because you are aged 18-70, fluent in English, and have normal or corrected-to-normal vision. </p>
+            </section>
+            <section id="withdraw">
+                <p><span class="lead">Do I have to take part?</span> No. Please note that participation is voluntary. If you do decide to take part, you may withdraw at any point for any reason before submitting your answers by pressing the closing the browser.</p>
+            </section>
+            <section id="procedure">
+                <p><span class="lead">What will happen to me if I decide to take part?</span> This study should take no more than 60 minutes of your time. No background knowledge is needed. During the task, you will be presented with a series of unknown countries, whereby you will be told the continent of that country. You will then have the opportunity to request information about the country. Your aim will be to identify the country, reporting which potential options you are considering and your confidence in your decision making. You will report how likely each option is, updating your beliefs as you receive more information. You will be told the answers at the end of the session. You will also have the chance to explain your thought process. After the study, we will ask you to fill in questionnaires about your decision making style and personality. </p>
+            </section>
+            <section id="risks">
+                <p><span class="lead">Are there any possible disadvantages or risks from taking part?</span> The study involves no risks beyond those incurred in everyday work.</p>
+            </section>
+            <section id="benefits">
+                <p><span class="lead">What are the possible benefits of taking part?</span> There are no direct benefits to you but you will be making a contribution to science and our understanding of decision making.</p>
+            </section>
+            <section id="privacy">
+                <p><span class="lead">How will my data be used?</span> We will not collect any data that could directly identify you. Research data (including task performance/questionnaire answers) will be anonymised with a code so that the results could not be linked back to you. All the data are kept on firewall and password- protected computers that are only accessible by the research team. The results of the research may be published in international peer-reviewed scientific journals and may become part of oral presentations at relevant scientific conferences. A copy of my thesis/ dissertation will be deposited both in print and online in the Oxford University Research Archive where it will be publicly available to facilitate its use in future research. Results will be anonymised and stored on the Open Science Framework for other researchers to collaborate and ensure the reproducibility of research conducted. Good scientific research encourages the sharing of information. As such, your anonymised results may be shared with other researchers to be used in other research studies.
+            </section>
+            <section id="data">
+                <p><span class="lead">Who will have access to my data?</span> The University of Oxford is the data controller with respect to your personal data and, as such, will determine how your personal data is used in the research. The University will process your personal data for the purpose of the research outlined above. Research is a task that is performed in the public interest. Further information about your rights with respect to your personal data is available from the University’s Information Compliance web site at https://compliance.admin.ox.ac.uk/individual-rights. The results will be written up for a PhD degree.
+            </section>
+            <section id="payment">
+                <p><span class="lead">Will I be reimbursed for taking part?</span> You will be paid pro rata for your time participating in this study at a rate of £10 per hour.</p>
+            </section>
+            <section id="funding">
+                <p><span class="lead">Who is organising and funding the study?</span> The research is organised by the Attention and Cognitive Control laboratory, under the direction of Prof Nick Yeung, who is a Professor of Cognitive Neuroscience at the University of Oxford. This study is funded by the Department of Experimental Psychology at the University of Oxford.</p>
+            </section>
+            <section id="oversight">
+                <p><span class="lead">Who has reviewed the study?</span> This project has been reviewed by, and received ethics clearance through, a subcommittee of the University of Oxford Central University Research Ethics Committee.</p>
+            </section>
+            <section id="contact">
+                <p><span class="lead"> Who do I contact if I have a concern about the research or I wish to complain? </span> If you have a concern about any aspect of this research, please contact <a class="mailto" href="mailto:sriraj.aiyer@psy.ox.ac.uk?subject=Country Study query">Sriraj Aiyer [sriraj.aiyer@psy.ox.ac.uk]</a> and I will do my best to answer your query. I will acknowledge your concern within 10 working days and give you an indication of how it will be dealt with. If you remain unhappy or wish to make a formal complaint, please contact the Chair of the Medical Sciences Interdivisional Research Ethics Committee at the University of Oxford who will seek to resolve the matter as soon as possible: <br> <br> Email: <a class="mailto" href="mailto:ethics@medsci.ox.ac.uk?subject=Country Study query">Ethics [ethics@medsci.ox.ac.uk]</a> Address: Research Services, University of Oxford, Boundary Brook House, Churchill Drive, Headington, Oxford OX3 7GB</p>
+            </section>
+            <section id="morecontact">
+                <p><span class="lead">Further information and contact details: </span>Name: Mr Sriraj Aiyer, Prof Nick Yeung, Prof Helen Higham. <br> <br> Address: University of Oxford, Department of Experimental Psychology, Anna Watts Building, Radcliffe Observatory Quarter, Oxford, OX2 6GG <br> <br>
+                Tel No: 01865271389 (Yeung), 01865271302 (Aiyer) <br> <br>
+                Email: sriraj.aiyer@psy.ox.ac.uk, nicholas.yeung@psy.ox.ac.uk, helen.higham@ndcn.ox.ac.uk
+                </p>
+            </section>
+        </div>
+        <div id="foot">
+            <form onsubmit="checkForm();return false">
+                <div class="required">
+                    I certify that I am 18 years of age or older <input class="big mandatory" type="checkbox"/>
+                </div>
+                <div class="required">
+                    I have read the above information and understand that I can cease participation at any time <input class="big mandatory" type="checkbox"/>
+                </div>
+                <div class="required">
+                    I have read the information above and agree to participate with the understanding that the data I submit will be processed accordingly<input class="big mandatory" type="checkbox"/>
+                </div>
+                <div>
+                    <input class="big submit" type="submit" value="I am willing to participate"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    // Work out where we're supposed to be going afterwards
+    let study = "";
+    let page = "";
+    let query = window.location.search.split('&');
+    query[0] = query[0].substr(1,query[0].length-1);
+    for(let i=0; i<query.length; i++) {
+        let pair = query[i].split('=');
+        if(pair[0]==='study')
+            study = pair[1];
+        if(pair[0]==='page')
+            page = pair[1] + '.html';
+    }
+    /**
+     * Replace all instances of 'contact us' with an appropriate link wrapper
+     */
+    let ps = document.querySelectorAll('p');
+    for(let i=0; i<ps.length; i++) {
+        let p = ps[i];
+        p.innerHTML = p.innerHTML.replace("contact us", '<a class="mailto" href="mailto:sriraj.aiyer@psy.ox.ac.uk?subject=Diagnosis Study Query">contact us</a>');
+    }
+
+    function checkForm() {
+        let boxes = document.querySelectorAll('input.mandatory');
+        // Check requirements
+        let okay = true;
+        for(let i=0; i<boxes.length; i++) {
+            if(!boxes[i].checked) {
+                okay = false;
+                break;
+            }
+        }
+        // Highlight missing options
+        if(!okay) {
+            let inputs = document.querySelectorAll('input.mandatory');
+            for(let i=0; i<inputs.length; i++) {
+                let div = inputs[i].parentElement;
+                if(inputs[i].checked == false)
+                    div.classList.add('missing');
+                else
+                    div.classList.remove('missing');
+            }
+            return;
+        }
+        // Proceed with the study
+        // Navigate to the appropriate place
+        let participantID = window.location.search.match('[?&]ParticipantID=\\w+');
+        if(participantID !== null)
+        participantID = participantID[0].substring(15);
+        redirectURL = "http://localhost:8000/?consent=true&PROLIFIC_PID=test";
+        if(participantID !== null)
+            redirectURL += "&ParticipantID=" + participantID;
+        window.location.href =  redirectURL; // forward as if user clicked a link
+
+    }
+</script>
+</html>

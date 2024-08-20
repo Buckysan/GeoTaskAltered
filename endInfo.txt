@@ -1,0 +1,4 @@
+ID: raj, Donation: YES, Charity: Helen and Douglas House
+Name: Raj Aiyer, Email: rajagain925@gmail.com, Donation: NO
+Name: Maja Friedmann, Email: maja@gmail.com, Donation: NO
+Name: Sarah Ashcroft, Email: sarah@gmail.com, Donation: NO
