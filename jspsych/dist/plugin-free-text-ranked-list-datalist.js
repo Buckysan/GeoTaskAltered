@@ -6,6 +6,8 @@
 *
 */
 
+var list = [];
+
 var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
   'use strict';
 
@@ -180,333 +182,96 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
 
   // We reload the current list of elements every time there is an 'update'
   // (eg an element is added, an element is removed)
-  function populateButtons (list,trial,display_element,slider_vals=[],scale_vals=[]) 
-  { 
-      let liHTML;
-      let sortList = document.getElementById("sortList");
-      sortList.innerHTML = "";
-      for (let i=0; i<list.length; i++)
-      {
+  function populateButtons(list, trial, display_element, slider_vals = [], scale_vals = []) {
+    let sortList = document.getElementById("sortList");
+    sortList.innerHTML = "";  // Clear the existing list items
+
+    for (let i = 0; i < list.length; i++) {
         let li = document.createElement("li");
-        liHTML = "<table style='width: 100%; table-layout: fixed;'><tr><td>"
-        liHTML += "<li id ='ListElementName" + i + "'; style='color:red;'>" + list[i]; // Element name
+        let liHTML = "<table style='width: 100%; table-layout: fixed;'><tr><td>";
+
+        liHTML += "<li id ='ListElementName" + i + "' style='color:red;'>" + list[i]; // Element name
         liHTML += "</td><td>";
 
-          // add options
-          var width = 100 / trial.scale_labels.length;
-          var options_string = '<ul class="jspsych-survey-likert-opts" id="scale' + i + '"><table><tr>';
-          options_string += '<li id="scaleLabel" style="list-style-type: none; font-size: small; color:skyblue; transform: translate(15%, -20%); padding-left: 2em">' + trial.scale_prompt + '</li>'
-          for (var j = 0; j < trial.scale_labels.length; j++) {
-              let check = '';
-              if (scale_vals.length > 0 && (scale_vals[i]) == j)
-              {
-                check = 'checked="checked"'; // check in the right scale option if previous done
-              }
-              options_string +=
-                  '<th><li style=" list-style-type:none; width:' +
-                      width +
-                      '%"><label class="jspsych-survey-likert-opt-label"><input type="radio" ' + check + 'name="Q' +
-                      list[i] +
-                      '" value="' +
-                      j +
-                      '"';
-              options_string += " required";
-              options_string += ">" + trial.scale_labels[j] + "</label></li></th>";
-          }
-          options_string += "</tr></table></ul>";
-          liHTML += options_string;
-          liHTML += "</td><td style='padding-left: 5em'>";
+        // Add scale options if scale_questions is enabled
+        if (trial.scale_questions) {
+            var width = 100 / trial.scale_labels.length;
+            var options_string = '<ul class="jspsych-survey-likert-opts" id="scale' + i + '"><table><tr>';
+            options_string += '<li id="scaleLabel" style="list-style-type: none; font-size: small; color:skyblue; transform: translate(15%, -20%); padding-left: 2em">' + trial.scale_prompt + '</li>';
+            for (var j = 0; j < trial.scale_labels.length; j++) {
+                let check = '';
+                if (scale_vals.length > 0 && scale_vals[i] == j) {
+                    check = 'checked="checked"';  // check in the right scale option if previously done
+                }
+                options_string +=
+                    '<th><li style="list-style-type:none; width:' + width + '%"><label class="jspsych-survey-likert-opt-label"><input type="radio" ' + check + ' name="Q' + list[i] + '" value="' + j + '"';
+                options_string += " required";
+                options_string += ">" + trial.scale_labels[j] + "</label></li></th>";
+            }
+            options_string += "</tr></table></ul>";
+            liHTML += options_string;
+        }
 
+        liHTML += "</td><td style='padding-left: 5em'>";
 
-          // add slider
-            liHTML +='<li id="scaleLabel" style="list-style-type: none; font-size: small; color:skyblue; transform: translate(15%, -100%); padding-left: 2em">' + trial.slider_prompt + '</li>'
-            liHTML += '<div id="jspsych-canvas-slider-response-wrapper-' + (i+1);
-          liHTML +=
-              '<div class="jspsych-canvas-slider-response-container" style="position:relative; width:';
-          if (trial.slider_width !== null) {
-              liHTML += trial.slider_width + "px;";
-          }
-          else {
-              liHTML += trial.canvas_size[1] + "px;";
-          }
-          
-          liHTML += '">';
+        // Add slider
+        liHTML += '<li id="scaleLabel" style="list-style-type: none; font-size: small; color:skyblue; transform: translate(15%, -100%); padding-left: 2em">' + trial.slider_prompt + '</li>';
+        liHTML += '<div id="jspsych-canvas-slider-response-wrapper-' + (i + 1) + '" style="position:relative; width:' + (trial.slider_width || trial.canvas_size[1]) + 'px;">';
 
-          let sliderStart;
-          if (slider_vals.length > 0)
-          {
-            sliderStart = slider_vals[i]; // Get the previous slider value 
-          }
-          else
-          {
-            sliderStart = trial.slider_start;
-          }
+        let sliderStart = slider_vals.length > 0 ? slider_vals[i] : trial.slider_start;
 
-          liHTML +=
-              '<input type="range" id="slider' + i + '" value="' +
-                  sliderStart +
-                  '" min="' +
-                  trial.min +
-                  '" max="' +
-                  trial.max +
-                  '" step="' +
-                  trial.step +
-                  '" style="width: 100%;" class="jspsych-canvas-slider-response-response" id="jspsych-canvas-slider-response-response-' + (i+1) + '"></input>';
-          liHTML += "<div>";
-          for (var j = 0; j < trial.slider_labels.length; j++) {
-              var width = 100 / (trial.slider_labels.length - 1);
-              var left_offset = (trial.slider_labels.length) * j;
-              liHTML +=
-                  '<div style="display: inline-block; position: absolute; left:' +
-                      left_offset +
-                      "%; text-align: center; width: " +
-                      width +
-                      '%;">';
-              liHTML += '<span style="text-align: center; font-size: 60%;">' + trial.slider_labels[j] + "</span>";
-              liHTML += "</div>";
-          }
-          liHTML += '</div>';
-          liHTML += '</div>';
-          liHTML += '</div>';  
-          liHTML += "</td><td>";
+        liHTML +=
+            '<input type="range" id="slider' + i + '" value="' +
+            sliderStart +
+            '" min="' +
+            trial.min +
+            '" max="' +
+            trial.max +
+            '" step="' +
+            trial.step +
+            '" style="width: 100%;" class="jspsych-canvas-slider-response-response" id="jspsych-canvas-slider-response-response-' + (i + 1) + '"></input>';
 
+        liHTML += "<div>";
+        for (var j = 0; j < trial.slider_labels.length; j++) {
+            var width = 100 / (trial.slider_labels.length - 1);
+            var left_offset = (trial.slider_labels.length) * j;
+            liHTML +=
+                '<div style="display: inline-block; position: absolute; left:' +
+                left_offset +
+                "%; text-align: center; width: " +
+                width +
+                '%;">';
+            liHTML += '<span style="text-align: center; font-size: 60%;">' + trial.slider_labels[j] + "</span>";
+            liHTML += "</div>";
+        }
+        liHTML += '</div>';
+        liHTML += '</div>';  
+        liHTML += '</div>';  
+        liHTML += "</td><td>";
 
-          liHTML += '<span class="close" style="color:red;">x</span></td></tr></table></li>';
-
+        // Add close button for removing the item
+        liHTML += '<span class="close" style="color:red;">x</span></td></tr></table></li>';
 
         li.innerHTML = liHTML;
         li.id = "ListElement" + i;
         li.className = "ListElement";
-        li.draggable = false;
         sortList.appendChild(li);
-      }
 
-      if (list.length < 1)
-      {
-        document.getElementById("jspsych-canvas-slider-response-next").disabled = true;
-      }
-      else
-      {
-        document.getElementById("jspsych-canvas-slider-response-next").disabled = false;
-      }
-
-        let plus = document.createElement("li"); 
-        plus.id = "addBox"; // Button for participant to add a new element to the list.
-        sortList.appendChild(plus);
-        plus.innerHTML = '<li><span id="add" class="add">+</span></li>';
-        let add = document.getElementById("add");
-        add.addEventListener("click", function() // when the plus button is clicked
-        {
-            document.getElementById("jspsych-canvas-slider-response-next").disabled = true;
-            plus.innerHTML = `
-        <li>
-          <form action="">
-            <input type="text" id="inputText" list="suggestions" placeholder="${trial.add_button_prompt}">
-            <datalist id="suggestions">
-              ${trial.suggestion_list.map(item => `<option value="${item}">`).join('')}
-            </datalist>
-            <span class="confirm" id="confirm">+</span>
-          </form>
-        </li>`;
-            var q_element = document.getElementById("inputText");
-            display_element.querySelector(q_element.focus()); // add a new textbox when participants add the name of the element.
-            q_element.onclick = function(e) {
-              q_element.focus();
-            };
-            q_element.onfocus = function(e) {
-              q_element.select();
-            };
-            let confirm = document.getElementById("confirm"); // participant types the element and then clicks to add it to the list.
-            confirm.addEventListener("click", function() {
-              let val = (q_element.value).toUpperCase();
-              if (trial.suggestion_list.includes(val) && !list.includes(val)) // if they input a blank string or a single letter, do not add to list.
-              {
-                list.push(val);
-                let sliderValues = [];
-                let scaleValues = [];
-                for (let x = 0; x<1000; x++)
-                {
-                  let id = "ListElement" + x
-                  if (document.getElementById(id) == null) // run through current list elements
-                  {
-                    break;
-                  }
-                  else
-                  { // we need the current slider and scale values so that when a new element is added
-                    // and the list is relaoded, those values are preserved.
-                    let slider = "slider" + x;
-                    sliderValues.push(parseInt((document.getElementById(slider)).value));
-                    let scale = "scale" + x;
-                    var match = display_element.querySelector("#" + scale);
-                    var inputboxes = match.querySelectorAll("input[type=radio]:checked");
-                    if (inputboxes.length < 1)
-                    {
-                      scaleValues.push(-1);
-                    }
-                    else
-                    {  
-                      scaleValues.push(parseInt(inputboxes[0].value));
-                    }
-                  }
-                }
-                document.getElementById("jspsych-canvas-slider-response-next").disabled = false;
-                populateButtons(list,trial,display_element,sliderValues,scaleValues); 
-              }
-            });
-
-            q_element.addEventListener("keypress", function(event) {
-                if (event.key === "Enter") { // do same thing if participant presses enter after typing element.
-                    event.preventDefault();
-                    let val = (q_element.value).toUpperCase();
-                    if (val.length > 2 && !list.includes(val))
-                    {
-                      list.push(val);
-                      let sliderValues = [];
-                      let scaleValues = [];
-                      for (let x = 0; x<1000; x++)
-                      {
-                        let id = "ListElement" + x
-                        if (document.getElementById(id) == null)
-                        {
-                          break;
-                        }
-                        else
-                        {
-                          let slider = "slider" + x;
-                          sliderValues.push(parseInt((document.getElementById(slider)).value));
-                          let scale = "scale" + x;
-                          var match = display_element.querySelector("#" + scale);
-                          var inputboxes = match.querySelectorAll("input[type=radio]:checked");
-                          if (inputboxes.length < 1)
-                          {
-                            scaleValues.push(-1);
-                          }
-                          else
-                          {  
-                            scaleValues.push(parseInt(inputboxes[0].value));
-                          }
-                        }
-                      }
-                      document.getElementById("jspsych-canvas-slider-response-next").disabled = false;
-                      populateButtons(list,trial,display_element,sliderValues,scaleValues);
-                    }
-                }
-            });
-        });
-
-      // participants can reorder the list by dragging and dropping elements in the list.
-      // if draggable_list is false, the elements are fixed in their position when added.
-      if (trial.draggable_list)
-      {
-        let items = sortList.getElementsByTagName("li"), current=null;
-
-        // MAKE ITEMS DRAGGABLE + SORTABLE
-        for (let i of items) 
-        {
-            // ATTACH DRAGGABLE
-            //i.draggable = true;
-            
-            // DRAG START - YELLOW HIGHLIGHT DROPZONES
-            i.ondragstart = (ev) => {
-              current = i;
-              for (let it of items) {
-                if (it != current) { it.classList.add("hint"); }
-              }
-            };
-            
-            // DRAG ENTER - RED HIGHLIGHT DROPZONE
-            i.ondragenter = (ev) => {
-              //if (i != current) { i.classList.add("active"); }
-              i.classList.add("active");
-            };
-
-            // DRAG LEAVE - REMOVE RED HIGHLIGHT
-            i.ondragleave = () => {
-              i.classList.remove("active");
-            };
-
-            // DRAG END - REMOVE ALL HIGHLIGHTS
-            i.ondragend = () => { for (let it of items) {
-                it.classList.remove("hint");
-                it.classList.remove("active");
-            }};
-         
-            // DRAG OVER - PREVENT THE DEFAULT "DROP", SO WE CAN DO OUR OWN
-            i.ondragover = (evt) => { evt.preventDefault(); };
-       
-            // ON DROP - DO SOMETHING
-            i.ondrop = (evt) => {
-              evt.preventDefault();
-              if (i != current) {
-                let currentpos = 0, droppedpos = 0;
-                for (let it=0; it<items.length; it++) {
-                  if (current == items[it]) { currentpos = it; }
-                  if (i == items[it]) { droppedpos = it; }
-                }
-                if (currentpos < droppedpos) {
-                  i.parentNode.insertBefore(current, i.nextSibling);
-                } else {
-                  i.parentNode.insertBefore(current, i);
-                }
-              }
-            };
-         }
-      }
-
-      /* Get all elements with class="close" */
-      var closebtns = document.getElementsByClassName("close");
-
-      /* Loop through the elements, and hide the parent, when clicked on */
-      for (var i = 0; i < closebtns.length; i++) 
-      {
-        let id = "ListElement" + i;
-        closebtns[i].addEventListener("click", function() 
-        {
-          let ele = document.getElementById(id);
-          ele.style.display = 'none';
-          ele.remove();
-
-          let num = parseInt(id.replace('ListElement',''));
-          list.splice(num,1);
-
-          slider_vals.splice(num,1);
-          scale_vals.splice(num,1)
-
-          let items = document.getElementsByClassName("ListElement");
-          if (items.length < 1)
-          {
-            list = [];
-          }
-          let count = 0;
-          for (let item of items) 
-          {
-            item.id = "ListElement" + count;
-            count++;
-          }
-          let sliderValues = [];
-          let scaleValues = []
-          for (let x = 0; x<1000; x++)
-          {
-            let id = "ListElement" + x
-            if (document.getElementById(id) == null)
-            {
-              break;
+        // Event listener for the close button to remove items
+        li.querySelector(".close").addEventListener("click", function() {
+            list.splice(i, 1);  // Remove the item from the list array
+            slider_vals.splice(i, 1);  // Remove the associated slider value
+            if (trial.scale_questions) {
+                scale_vals.splice(i, 1);  // Remove the associated scale value
             }
-            else
-            {
-              let slider = "slider" + x;
-              sliderValues.push(parseInt((document.getElementById(slider)).value));
-              let scale = "scale" + x;
-              var match = display_element.querySelector("#" + scale);
-              var inputboxes = match.querySelectorAll("input[type=radio]:checked");
-              scaleValues.push(parseInt(inputboxes[0].value));
-            }
-          }
-          populateButtons(list,trial,display_element,sliderValues,scaleValues);
+            populateButtons(list, trial, display_element, slider_vals, scale_vals);  // Re-populate the list
         });
-      }
+    }
 
-  }
+    // Disable the "Next" button if the list is empty
+    document.getElementById("jspsych-canvas-slider-response-next").disabled = list.length < 1;
+}
+
   /**
    * **free-text-ranked-list**
    *
@@ -544,74 +309,76 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
           html += '<ul id="sortList"></ul>';
 
           // add submit button
-          html +=
-              '<button id="jspsych-canvas-slider-response-next" class="jspsych-btn" ' +
-                  (trial.start_empty ? "disabled" : "") +
-                  ">" +
-                  trial.button_label +
-                  "</button>";
+          html += `
+          <form action="" style="margin-bottom: 1em;">
+              <input type="text" id="inputText" list="suggestions" placeholder="${trial.add_button_prompt}" style="margin-right: 1em;">
+              <datalist id="suggestions">
+                  ${trial.suggestion_list.map(item => `<option value="${item}">`).join('')}
+              </datalist>
+              <button id="confirm" class="jspsych-btn">Add</button>
+          </form>
+          `;
+
+          // Add the unordered list (ul) element where list items will be added
+          html += '<ul id="sortList"></ul>';
+
+          // Add the submit button
+          html += `
+              <button id="jspsych-canvas-slider-response-next" class="jspsych-btn" ${trial.start_empty ? "disabled" : ""}>
+                  ${trial.button_label}
+              </button>
+          `;
           display_element.innerHTML = html;
 
           var start_time = performance.now();
 
           let sortList = document.getElementById("sortList");
-          let plus = document.createElement("li");
-          plus.id = "addBox";
-          sortList.appendChild(plus);
-          plus.innerHTML = '<li><span class="add" id="add">+</span></li>';
-          let add = document.getElementById("add");
-          add.addEventListener("click", function() 
-          {
-              plus.innerHTML = `
-              <li>
-                <form action="">
-                  <input type="text" id="inputText" list="suggestions" placeholder="${trial.add_button_prompt}">
-                  <datalist id="suggestions">
-                    ${trial.suggestion_list.map(item => `<option value="${item}">`).join('')}
-                  </datalist>
-                  <span class="confirm" id="confirm">+</span>
-                </form>
-              </li>`;
-              var q_element = document.getElementById("inputText");
-              display_element.querySelector(q_element.focus());
-              q_element.onclick = function(e) {
-                q_element.focus();
-              };
-              q_element.onfocus = function(e) {
-                q_element.select();
-              };
 
-              let confirm = document.getElementById("confirm"); 
-              confirm.addEventListener("click", function()
-              {
-                let val = q_element.value;
-                if (trial.suggestion_list.includes(val))
-                {
-                  plus.remove();
-                  let newList = [];
-                  newList.push((q_element.value).toUpperCase());
-                  document.getElementById("jspsych-canvas-slider-response-next").disabled = false;
-                  populateButtons(newList,trial,display_element);
+          function addItemToList() {
+            let q_element = document.getElementById("inputText");
+            let val = q_element.value.toUpperCase();
+            if (val.length > 1 && !list.includes(val)) {
+                list.push(val);
+                let sliderValues = [];
+                let scaleValues = [];
+    
+                // Preserve current slider and scale values
+                for (let x = 20; x < 1000; x++) {
+                    let id = "ListElement" + x;
+                    if (document.getElementById(id) == null) {
+                        break;
+                    } else {
+                        let slider = "slider" + x;
+                        sliderValues.push(parseInt((document.getElementById(slider)).value));
+                        let scale = "scale" + x;
+                        var match = display_element.querySelector("#" + scale);
+                        var inputboxes = match.querySelectorAll("input[type=radio]:checked");
+                        if (inputboxes.length < 1) {
+                            scaleValues.push(-1);
+                        } else {
+                            scaleValues.push(parseInt(inputboxes[0].value));
+                        }
+                    }
                 }
-              });
+                populateButtons(list, trial, display_element, sliderValues, scaleValues);
+                q_element.value = "";  // Clear the input box
+            }
+        }
+        
+        // Event listener for the "Add" button
+          document.getElementById("confirm").addEventListener("click", function(event) {
+            event.preventDefault();
+            addItemToList();
+        });
 
-              q_element.addEventListener("keypress", function(event) {
-                  if (event.key === "Enter") {
-                      event.preventDefault();
-                      let val = q_element.value;
-                      if (val.length > 1)
-                      {
-                        plus.remove();
-                        let newList = [];
-                        newList.push((q_element.value).toUpperCase());
-                        document.getElementById("jspsych-canvas-slider-response-next").disabled = false;
-                        populateButtons(newList,trial,display_element);
-                      }
-                  }
-              });
-
-          });
-
+        // Event listener for pressing "Enter" in the input box
+        document.getElementById("inputText").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                addItemToList();
+            }
+        });
+        
           /* Get all elements with class="close" */
           var closebtns = document.getElementsByClassName("close");
           /* Loop through the elements, and hide the parent, when clicked on */
@@ -678,68 +445,57 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
 
 
           let nextButton = document.getElementById("jspsych-canvas-slider-response-next");
-          nextButton.addEventListener("click", function() {
-            var end_time = performance.now();
-            var rt = Math.round(end_time - start_time);
-            response.totalTime = parseInt(rt);
-            response.responses = [];
-            response.sliderValues = [];
-            response.scaleValues = [];
-            let success = false;
-            for (let x = 0; x<1000; x++)
-            {
-              let id = "ListElementName" + x
-              if (document.getElementById(id) == null)
-              {
-                if (trial.scale_questions)
-                {
-                  let err = document.getElementById("genError");
-                  if (err !== null)
-                  {
-                    err.remove();
-                  }
+    nextButton.addEventListener("click", function() {
+        var end_time = performance.now();
+        var rt = Math.round(end_time - start_time);
+        response.totalTime = parseInt(rt);
+        response.responses = [];
+        response.sliderValues = [];
+        response.scaleValues = [];
+        let success = false;
+        for (let x = 0; x < 1000; x++) {
+            let id = "ListElementName" + x;
+            if (document.getElementById(id) == null) {
+                if (trial.scale_questions) {
+                    let err = document.getElementById("genError");
+                    if (err !== null) {
+                        err.remove();
+                    }
                 }
                 success = true;
                 break;
-              }
-              else
-              {
+            } else {
                 response.responses.push((document.getElementById(id)).innerText);
                 let slider = "slider" + x;
                 response.sliderValues.push(parseInt((document.getElementById(slider)).value));
 
-                if (trial.scale_questions)
-                {
-                  let errorStyle = "style='color: red;position: absolute;left: 50%;transform: translate(-50%, -50%);top: 60%;'";
-                  let genError = document.querySelector('div.jspsych-content-wrapper').appendChild(document.createElement('div'));
-                  genError.innerHTML = "<div " + errorStyle + ">" + trial.blank_scale_error + "</div>"; //check that all scales are filled in.
-                  genError.classList.add('hidden');
-                  genError.id = "genError";
-                  let scale = "scale" + x;
-                  var match = display_element.querySelector("#" + scale);
-                  var inputboxes = match.querySelectorAll("input[type=radio]:checked");
-                  if (inputboxes.length < 1)
-                  {
-                   genError.classList.remove('hidden');
-                   break;
-                  }
-                  else
-                  {  
-                    response.scaleValues.push(parseInt(inputboxes[0].value));
-                    let err = document.getElementById("genError");
-                    if (err !== null)
-                    {
-                      err.remove();
+                if (trial.scale_questions) {
+                    let errorStyle = "style='color: red;position: absolute;left: 50%;transform: translate(-50%, -50%);top: 60%;'";
+                    let genError = document.querySelector('div.jspsych-content-wrapper').appendChild(document.createElement('div'));
+                    genError.innerHTML = "<div " + errorStyle + ">" + trial.blank_scale_error + "</div>"; // Check that all scales are filled in
+                    genError.classList.add('hidden');
+                    genError.id = "genError";
+                    let scale = "scale" + x;
+                    var match = display_element.querySelector("#" + scale);
+                    var inputboxes = match.querySelectorAll("input[type=radio]:checked");
+                    if (inputboxes.length < 1) {
+                        genError.classList.remove('hidden');
+                        break;
+                    } else {
+                        response.scaleValues.push(parseInt(inputboxes[0].value));
+                        let err = document.getElementById("genError");
+                        if (err !== null) {
+                            err.remove();
+                        }
                     }
-                  }
                 }
-              }
             }
-            if (success)
-            {
-              end_trial();
-            }
-          });      
+        }
+        if (success) {
+            end_trial();
+        }
+    });
+      
 
           // function to end trial when it is time
           const end_trial = () => {

@@ -706,7 +706,7 @@
     const differentialsTutorial = 
     {
         type: jsPsychFreeTextRankedListDatalist,
-        prompt: "<p><strong style='font-size: larger;'>AAt the end of each information stage, you will record a list of ALL COUNTRIES that you are currently thinking of.</strong></p><p>Click the plus icon to add a country to the list. Once you type in the country, click the plus again or Enter on your keyboard. For each country, you will record how how likely that country is on a scale of 1-10.</p><p>Now try adding some countries and put as many guesses as you can! Once you are done with your list, click Continue. Make sure that you have provided your likelihood for all countries before doing so.</p>",
+        prompt: "<p><strong style='font-size: larger;'>At the end of each information stage, you will record a list of ALL COUNTRIES that you are currently thinking of.</strong></p><p>Click the plus icon to add a country to the list. Once you type in the country, click the plus again or Enter on your keyboard. For each country, you will record how how likely that country is on a scale of 1-10.</p><p>Now try adding some countries and put as many guesses as you can! Once you are done with your list, click Continue. Make sure that you have provided your likelihood for all countries before doing so.</p>",
         slider_labels: sliderLabels,
         slider_start: 5,
         slider_prompt: sliderName,
@@ -867,7 +867,7 @@
         tutorialTrial.push(tutorialStage2);
 
         var differentialsTutorialStage2 = {
-            type: jsPsychFreeTextRankedList,
+            type: jsPsychFreeTextRankedListDatalist,
             prompt: "<p>You will notice that your country from the first stage has been saved for you to now update given the extra information received via the Geography of the country.</p><p> As before, you can add countries to the list using the plus icon.</p><p> <strong>If a country is no longer under consideration, you can use the cross icon on the right of the country to remove it from the list. Make sure to update your country list in the light of the new information you have received!</strong> </p>",
             slider_labels: sliderLabels,
             slider_start: 5,
@@ -879,6 +879,7 @@
             add_button_prompt: addButtonPrompt,
             blank_scale_error: scaleError,
             start_empty: false,
+            suggestion_list: countryList,
             starting_list: function(){
                 let array = jsPsych.data.get().last(3);
                 return array.trials[0].response
@@ -932,7 +933,7 @@
         tutorialTrial.push(tutorialStage3);
 
         var differentialsTutorialStage3 = {
-                    type: jsPsychFreeTextRankedList,
+                    type: jsPsychFreeTextRankedListDatalist,
                     prompt: "<p>This is your last chance to record guesses for the country. You can record multiple countries even at this stage.</p><p><strong>Record ANY countries that you are considering. Even if they are a remote possiblity, please record them.</strong></p>",
                     slider_labels: sliderLabels,
                     slider_start: 5,
@@ -944,6 +945,7 @@
                     add_button_prompt: addButtonPrompt,
                     blank_scale_error: scaleError,
                     start_empty: false,
+                    suggestion_list: countryList,
                     starting_list: function(){
                         let array = jsPsych.data.get().last(3);
                         return array.trials[0].response
@@ -1048,11 +1050,12 @@
                 if (i==1)
                 {
                     trial.push(differentials);
+                    //add potential feedback step here//
                 }
                 else
                 {
                     var differentialsStage = {
-                        type: jsPsychFreeTextRankedList,
+                        type: jsPsychFreeTextRankedListDatalist,
                         prompt: "<p><strong>Update your list of countries</strong></p>",
                         slider_labels: sliderLabels,
                         slider_start: 5,
@@ -1064,6 +1067,7 @@
                         add_button_prompt: addButtonPrompt,
                         blank_scale_error: scaleError,
                         start_empty: false,
+                        suggestion_list: countryList,
                         starting_list: function(){ // We need to load the differentials, slider and scale values from last subtrial/stage.
                             let array = jsPsych.data.get().last(3);
                             return array.trials[0].response
@@ -1083,6 +1087,7 @@
                         on_finish: (trial)=>{
                             exp.saveDifferentials(trial)
                             exp.exportGovernor();
+
                         }
                     }
                     trial.push(differentialsStage);
