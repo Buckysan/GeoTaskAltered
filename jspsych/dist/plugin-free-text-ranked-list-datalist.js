@@ -1,18 +1,10 @@
-/** This jspysch plugin allows for trials where participant responses
-* comprise of a ranked/ordered list of items, that they input via free text.
-* Each item then has an attached scale and slider.
-*
-* Author: Sriraj Aiyer.
-*
-*/
-
 var list = [];
 
 var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
   'use strict';
 
   const info = {
-      name: "free-text-ranked-list",
+      name: "free-text-ranked-list-datalist",
       parameters: 
       {
       	  /** Any content here will be displayed under the button. */
@@ -176,12 +168,16 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
             pretty_name: "Suggestion List",
             default: [],
             array: true,
-          }
+          },
+          reset_data_on_trial: {
+            type: jspsych.ParameterType.BOOL,
+            pretty_name: "Reset Data on Trial",
+            default: false,
+          },
+          
       }
   };
 
-  // We reload the current list of elements every time there is an 'update'
-  // (eg an element is added, an element is removed)
   function populateButtons(list, trial, display_element, slider_vals = [], scale_vals = []) {
     let sortList = document.getElementById("sortList");
     sortList.innerHTML = "";  // Clear the existing list items
@@ -272,15 +268,6 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
     document.getElementById("jspsych-canvas-slider-response-next").disabled = list.length < 1;
 }
 
-  /**
-   * **free-text-ranked-list**
-   *
-   * jsPsych plugin for being able to add items to list via typing 
-   * and then dragging to rearrange the list
-   *
-   * @author Sriraj Aiyer
-   * @see {@link https://www.jspsych.org/plugins/jspsych-free-sort/ free-sort plugin documentation on jspsych.org}
-   */
   class FreeTextRankedListPlugin {
       constructor(jsPsych) 
       {
@@ -288,6 +275,19 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
       }
       trial(display_element, trial) 
       { 
+        if (trial.reset_data_on_trial) {
+            list = [];  // Reset the list
+            response = {  // Reset the response object
+              rt: null,
+              responses: [],
+              sliderValues: [],
+              scaleValues: [],
+              startingList: [],
+              startingSliders: [],
+              startingScales: [],
+            };
+        }
+                  
       	  var height, width;
           var html = "";
 	  	    // store response
@@ -295,10 +295,10 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
               rt: null,
               responses: [],
               sliderValues: [],
-              scaleValues: [],
+              scaleValues: [],  // Initialize scaleValues to capture scale inputs
               startingList: [],
               startingSliders: [],
-              startingScales: []
+              startingScales: [],
           };
 
 
@@ -337,33 +337,35 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
           function addItemToList() {
             let q_element = document.getElementById("inputText");
             let val = q_element.value.toUpperCase();
-            if (val.length > 1 && !list.includes(val)) {
+            if (trial.suggestion_list.includes(val) && !list.includes(val)) {
                 list.push(val);
                 let sliderValues = [];
                 let scaleValues = [];
-    
-                // Preserve current slider and scale values
-                for (let x = 20; x < 1000; x++) {
-                    let id = "ListElement" + x;
-                    if (document.getElementById(id) == null) {
-                        break;
+        
+                // Get all sliders and scales by more robust selectors
+                let sliders = document.querySelectorAll("[id^='slider']");
+                let scales = document.querySelectorAll("[id^='scale']");
+        
+                // Preserve slider values
+                sliders.forEach((slider, index) => {
+                    sliderValues.push(parseInt(slider.value));
+                });
+        
+                // Preserve scale values
+                scales.forEach((scale) => {
+                    var inputboxes = scale.querySelectorAll("input[type=radio]:checked");
+                    if (inputboxes.length < 1) {
+                        scaleValues.push(-1);
                     } else {
-                        let slider = "slider" + x;
-                        sliderValues.push(parseInt((document.getElementById(slider)).value));
-                        let scale = "scale" + x;
-                        var match = display_element.querySelector("#" + scale);
-                        var inputboxes = match.querySelectorAll("input[type=radio]:checked");
-                        if (inputboxes.length < 1) {
-                            scaleValues.push(-1);
-                        } else {
-                            scaleValues.push(parseInt(inputboxes[0].value));
-                        }
+                        scaleValues.push(parseInt(inputboxes[0].value));
                     }
-                }
+                });
+                
+                // Populate buttons with preserved values
                 populateButtons(list, trial, display_element, sliderValues, scaleValues);
                 q_element.value = "";  // Clear the input box
             }
-        }
+        }        
         
         // Event listener for the "Add" button
           document.getElementById("confirm").addEventListener("click", function(event) {
@@ -436,13 +438,8 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
           if (!(trial.start_empty)) //start trial with preloaded list of elements if provided.
           {
           	startingList = trial.starting_list;
-          	//response.startinglist = startingList;
-          	//response.responses = startingList;
-            //response.startingSliders = trial.starting_sliders;
-            //response.startingScales = trial.starting_scales;
-            populateButtons(startingList,trial,display_element,trial.starting_sliders,trial.starting_scales);
+          	populateButtons(startingList,trial,display_element,trial.starting_sliders,trial.starting_scales);
 				  }
-
 
           let nextButton = document.getElementById("jspsych-canvas-slider-response-next");
     nextButton.addEventListener("click", function() {
@@ -506,7 +503,7 @@ var jsPsychFreeTextRankedListDatalist = (function (jspsych) {
                   rt: response.rt,
                   response: response.responses,
                   sliderValues: response.sliderValues,
-                  scaleValues: response.scaleValues,
+                  scaleValues: response.scaleValues,  // Store scale values
                   startinglist: response.startinglist
               };
               // clear the display

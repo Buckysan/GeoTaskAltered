@@ -114,209 +114,26 @@
     ////////////////////////////////////////////
     ////////////////////////////////////////////
 
-    const countryList = [
-    "Afghanistan",
-    "Albania",
-    "Algeria",
-    "Andorra",
-    "Angola",
-    "Antigua and Barbuda",
-    "Argentina",
-    "Armenia",
-    "Australia",
-    "Austria",
-    "Azerbaijan",
-    "Bahamas",
-    "Bahrain",
-    "Bangladesh",
-    "Barbados",
-    "Belarus",
-    "Belgium",
-    "Belize",
-    "Benin",
-    "Bhutan",
-    "Bolivia",
-    "Bosnia and Herzegovina",
-    "Botswana",
-    "Brazil",
-    "Brunei",
-    "Bulgaria",
-    "Burkina Faso",
-    "Burundi",
-    "Cabo Verde",
-    "Cambodia",
-    "Cameroon",
-    "Canada",
-    "Central African Republic",
-    "Chad",
-    "Chile",
-    "China",
-    "Colombia",
-    "Comoros",
-    "Congo, Democratic Republic of the",
-    "Congo, Republic of the",
-    "Costa Rica",
-    "Croatia",
-    "Cuba",
-    "Cyprus",
-    "Czech Republic",
-    "Denmark",
-    "Djibouti",
-    "Dominica",
-    "Dominican Republic",
-    "Ecuador",
-    "Egypt",
-    "El Salvador",
-    "Equatorial Guinea",
-    "Eritrea",
-    "Estonia",
-    "Eswatini",
-    "Ethiopia",
-    "Fiji",
-    "Finland",
-    "France",
-    "Gabon",
-    "Gambia",
-    "Georgia",
-    "Germany",
-    "Ghana",
-    "Greece",
-    "Grenada",
-    "Guatemala",
-    "Guinea",
-    "Guinea-Bissau",
-    "Guyana",
-    "Haiti",
-    "Honduras",
-    "Hungary",
-    "Iceland",
-    "India",
-    "Indonesia",
-    "Iran",
-    "Iraq",
-    "Ireland",
-    "Israel",
-    "Italy",
-    "Jamaica",
-    "Japan",
-    "Jordan",
-    "Kazakhstan",
-    "Kenya",
-    "Kiribati",
-    "Korea, North",
-    "Korea, South",
-    "Kosovo",
-    "Kuwait",
-    "Kyrgyzstan",
-    "Laos",
-    "Latvia",
-    "Lebanon",
-    "Lesotho",
-    "Liberia",
-    "Libya",
-    "Liechtenstein",
-    "Lithuania",
-    "Luxembourg",
-    "Madagascar",
-    "Malawi",
-    "Malaysia",
-    "Maldives",
-    "Mali",
-    "Malta",
-    "Marshall Islands",
-    "Mauritania",
-    "Mauritius",
-    "Mexico",
-    "Micronesia",
-    "Moldova",
-    "Monaco",
-    "Mongolia",
-    "Montenegro",
-    "Morocco",
-    "Mozambique",
-    "Myanmar",
-    "Namibia",
-    "Nauru",
-    "Nepal",
-    "Netherlands",
-    "New Zealand",
-    "Nicaragua",
-    "Niger",
-    "Nigeria",
-    "North Macedonia",
-    "Norway",
-    "Oman",
-    "Pakistan",
-    "Palau",
-    "Palestine",
-    "Panama",
-    "Papua New Guinea",
-    "Paraguay",
-    "Peru",
-    "Philippines",
-    "Poland",
-    "Portugal",
-    "Qatar",
-    "Romania",
-    "Russia",
-    "Rwanda",
-    "Saint Kitts and Nevis",
-    "Saint Lucia",
-    "Saint Vincent and the Grenadines",
-    "Samoa",
-    "San Marino",
-    "Sao Tome and Principe",
-    "Saudi Arabia",
-    "Senegal",
-    "Serbia",
-    "Seychelles",
-    "Sierra Leone",
-    "Singapore",
-    "Slovakia",
-    "Slovenia",
-    "Solomon Islands",
-    "Somalia",
-    "South Africa",
-    "South Sudan",
-    "Spain",
-    "Sri Lanka",
-    "Sudan",
-    "Suriname",
-    "Sweden",
-    "Switzerland",
-    "Syria",
-    "Taiwan",
-    "Tajikistan",
-    "Tanzania",
-    "Thailand",
-    "Timor-Leste",
-    "Togo",
-    "Tonga",
-    "Trinidad and Tobago",
-    "Tunisia",
-    "Turkey",
-    "Turkmenistan",
-    "Tuvalu",
-    "Uganda",
-    "Ukraine",
-    "United Arab Emirates",
-    "United Kingdom",
-    "United States",
-    "Uruguay",
-    "Uzbekistan",
-    "Vanuatu",
-    "Vatican City",
-    "Venezuela",
-    "Vietnam",
-    "Yemen",
-    "Zambia",
-    "Zimbabwe",
-    "Tibet",
-    "Catalonia",
-    "Northern Cyprus",
-    "Hong Kong",
-    "Puerto Rico",
-    "Lapland",
+    var countryList = [
+    "AFGHANISTAN", "ALBANIA", "ALGERIA", "ANDORRA", "ANGOLA", "ANTIGUA AND BARBUDA", "ARGENTINA", "ARMENIA", "AUSTRALIA", "AUSTRIA", 
+    "AZERBAIJAN", "BAHAMAS", "BAHRAIN", "BANGLADESH", "BARBADOS", "BELARUS", "BELGIUM", "BELIZE", "BENIN", "BHUTAN", "BOLIVIA", 
+    "BOSNIA AND HERZEGOVINA", "BOTSWANA", "BRAZIL", "BRUNEI", "BULGARIA", "BURKINA FASO", "BURUNDI", "CABO VERDE", "CAMBODIA", 
+    "CAMEROON", "CANADA", "CENTRAL AFRICAN REPUBLIC", "CHAD", "CHILE", "CHINA", "COLOMBIA", "COMOROS", "CONGO", 
+    "CONGO (DEMOCRATIC REPUBLIC)", "COSTA RICA", "CROATIA", "CUBA", "CYPRUS", "CZECHIA", "DENMARK", "DJIBOUTI", "DOMINICA", 
+    "DOMINICAN REPUBLIC", "ECUADOR", "EGYPT", "EL SALVADOR", "EQUATORIAL GUINEA", "ERITREA", "ESTONIA", "ESWATINI", "ETHIOPIA", 
+    "FIJI", "FINLAND", "FRANCE", "GABON", "GAMBIA", "GEORGIA", "GERMANY", "GHANA", "GREECE", "GRENADA", "GUATEMALA", "GUINEA", 
+    "GUINEA-BISSAU", "GUYANA", "HAITI", "HONDURAS", "HUNGARY", "ICELAND", "INDIA", "INDONESIA", "IRAN", "IRAQ", "IRELAND", "ISRAEL", 
+    "ITALY", "JAMAICA", "JAPAN", "JORDAN", "KAZAKHSTAN", "KENYA", "KIRIBATI", "KOREA (NORTH)", "KOREA (SOUTH)", "KUWAIT", "KYRGYZSTAN", 
+    "LAOS", "LATVIA", "LEBANON", "LESOTHO", "LIBERIA", "LIBYA", "LIECHTENSTEIN", "LITHUANIA", "LUXEMBOURG", "MADAGASCAR", "MALAWI", 
+    "MALAYSIA", "MALDIVES", "MALI", "MALTA", "MARSHALL ISLANDS", "MAURITANIA", "MAURITIUS", "MEXICO", "MICRONESIA", "MOLDOVA", 
+    "MONACO", "MONGOLIA", "MONTENEGRO", "MOROCCO", "MOZAMBIQUE", "MYANMAR", "NAMIBIA", "NAURU", "NEPAL", "NETHERLANDS", 
+    "NEW ZEALAND", "NICARAGUA", "NIGER", "NIGERIA", "NORTH MACEDONIA", "NORWAY", "OMAN", "PAKISTAN", "PALAU", "PANAMA", "PAPUA NEW GUINEA", 
+    "PARAGUAY", "PERU", "PHILIPPINES", "POLAND", "PORTUGAL", "QATAR", "ROMANIA", "RUSSIA", "RWANDA", "SAINT KITTS AND NEVIS", "SAINT LUCIA", 
+    "SAINT VINCENT AND THE GRENADINES", "SAMOA", "SAN MARINO", "SAO TOME AND PRINCIPE", "SAUDI ARABIA", "SENEGAL", "SERBIA", "SEYCHELLES", 
+    "SIERRA LEONE", "SINGAPORE", "SLOVAKIA", "SLOVENIA", "SOLOMON ISLANDS", "SOMALIA", "SOUTH AFRICA", "SOUTH SUDAN", "SPAIN", 
+    "SRI LANKA", "SUDAN", "SURINAME", "SWEDEN", "SWITZERLAND", "SYRIA", "TAIWAN", "TAJIKISTAN", "TANZANIA", "THAILAND", "TIMOR-LESTE", 
+    "TOGO", "TONGA", "TRINIDAD AND TOBAGO", "TUNISIA", "TURKEY", "TURKMENISTAN", "TUVALU", "UGANDA", "UKRAINE", "UNITED ARAB EMIRATES", 
+    "UNITED KINGDOM", "UNITED STATES", "URUGUAY", "UZBEKISTAN", "VANUATU", "VATICAN CITY", "VENEZUELA", "VIETNAM", "YEMEN", "ZAMBIA", "ZIMBABWE"
 ];
 
 
@@ -409,6 +226,12 @@
         window.location.replace(endRedirectURL);
     }});
     
+    var feedbackGroup = Math.random() < 0.5 ? true : false
+    console.log(feedbackGroup)
+    jsPsych.data.addProperties({
+        isInFeedbackGroup : feedbackGroup,
+    });
+
     const browserInstruct = {
         type: jsPsychInstructions,
         pages: ["<p>Please do not use the back or forward buttons on your browser during the experiment. Data on your performance will not save until the end of the experiment so do not close your browser unless you would no longer like to participate.</p>" + "<p>This study should take around half an hour, so please make sure you have enough time and are in a quiet place where you are unlikely to be interrupted.</p>" + "<p>Thank you for your cooperation!</p>" + "<p>Press Next to begin.</p>"],
@@ -614,6 +437,38 @@
         }
     }
 
+    const feedback = {
+        type: jsPsychInstructions,
+        pages: [
+            'Your highest ranked option is not the correct answer'
+        ],
+        show_clickable_nav: true,
+        allow_backward: false,
+        on_load: ()=>exp.fullscreenMode(),
+        on_finish: (trial)=>{
+            exp.fullscreenMode();
+        }
+    };
+
+    const reasoningStrategySelfAnalysis = 
+    {
+        type: jsPsychSurveyMultiChoice,
+        preamble: "The following questions relate to how you chose your . Please rate the following statements from Strongly Disagree to Strongly Agree:",
+        questions:[
+            {name: "SR", prompt: "I used the information to exclude countries and narrow down the range of possible guesses to get the country based off of knowledge of commonalities between countries. ", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "HDR", prompt: "I formed a rough guess based on initial information and then sought information to affirm or deny its viability.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "PR", prompt: "The information I chose, either as a stand alone or in combination with other pieces of information, was tell-tale of a certain predictable country and allowed me to quickly evaluate it.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+        ],
+        randomize_question_order: true,
+        button_label: "Submit",
+        on_load: ()=>{
+            exp.fullscreenMode();
+        },
+        on_finish: (trial)=>{
+            exp.saveDecisionQuestions(trial);
+            exp.exportGovernor();
+        }
+    }
     // const confidenceTreatment = {
     //     type: jsPsychCanvasSliderResponseWithButtons,
     //     stimulus: '',
@@ -694,10 +549,35 @@
         blank_scale_error: scaleError,
         draggable_list: false,
         suggestion_list: countryList,
+        reset_data_on_trial: true,
+        starting_list: [],
+        starting_scales: [],
+        starting_sliders: [],
         on_load: ()=>{
             exp.fullscreenMode();
         },
-        on_finish: (trial)=>{
+        on_finish: function(trial) {
+            
+            // Attempt to log trial data correctly
+            console.log(trial);  // Logs the response object
+            let recentTrial = jsPsych.data.get().filter({ trial_type: 'free-text-ranked-list-datalist' }).last(1).values()[0];
+            let recentData = {
+            sliderValues: [...recentTrial.sliderValues],
+            response: [...recentTrial.response]
+            };
+            console.log(recentData);
+            // This will give you the trial data object directly, instead of an array containing the object.
+            let maxSliderValue = Math.max(recentData.sliderValues);
+            let maxResponses = recentData.response.filter((_, index) => recentData.sliderValues[index] === maxSliderValue);
+            // Add the highest slider value and responses to jsPsych data for this trial
+            jsPsych.data.addProperties({
+                highest_slider_responses: maxResponses,
+                highest_slider_value: maxSliderValue
+            });
+            // Ensure the values are logged correctly
+            console.log("Responses with highest slider value:", maxResponses);
+            console.log("Highest slider value:", maxSliderValue);
+            // Save and export
             exp.saveDifferentials(trial)
             exp.exportGovernor();
         }
@@ -914,7 +794,7 @@
         }
         stageButtons.push(stopInfoSeekingButton);
         var tutorialStage3 = {
-            type: jsPsychImageButtonResponse,
+            type: jsPsychImageButtonResponseAltered,
             stimulus: '',
             choices: stageButtons,
             response_ends_trial: false,
@@ -1000,6 +880,8 @@
 
     for (let x = 0; x < numOfScenarios; x++)
     {
+        let feedbackCases = [1,2,3,4,5];
+        let country = shuffledScenarios[x]["TrueCountry"];
         var currentCaseIntro = {
             type: jsPsychInstructions,
             pages: ["<p>For this trial: " + shuffledScenarios[x].Prompt],
@@ -1050,7 +932,39 @@
                 if (i==1)
                 {
                     trial.push(differentials);
-                    //add potential feedback step here//
+
+                    trial.push(confidence);
+
+                    const guesslist_feedback_condition = {
+                        timeline: [feedback], // assuming feedback is a jsPsychInstructions trial
+                        conditional_function: function() {
+                            // Check the most recent response data
+                            let lastData = jsPsych.data.get().filter({trial_type: 'free-text-ranked-list-datalist'}).last(1).values()[0]; // Extract the object from the array
+                            let highestResponses = [];
+                            // No need to check if lastData is an array, because it's an object
+                            if (lastData && lastData.highest_slider_responses) {
+                                let highestResponses = lastData.highest_slider_responses[0]; // Access the first element in the array
+                                console.log(highestResponses);
+                            }
+                            let allCapsCountry = country.toUpperCase();
+                            console.log(allCapsCountry)
+                            
+
+                            // If the highest ranked option does not include 'country' and guessFeedback is true and feedback is wanted on the specified trial number, show feedback
+                            if (!highestResponses.includes(allCapsCountry) /*&& feedbackGroup === true && feedbackCases.includes(x)*/) {
+                                return true;  // Show feedback
+                                jsPsych.addProperties({
+                                    feedback_given: true + 'on trial number' + x
+                                })
+                            } else {
+                                return false; // Skip feedback
+                            }
+                        },
+                    };
+
+                    trial.push(guesslist_feedback_condition)
+                        
+
                 }
                 else
                 {
@@ -1068,17 +982,21 @@
                         blank_scale_error: scaleError,
                         start_empty: false,
                         suggestion_list: countryList,
-                        starting_list: function(){ // We need to load the differentials, slider and scale values from last subtrial/stage.
-                            let array = jsPsych.data.get().last(3);
-                            return array.trials[0].response
+                        starting_list: function() {
+                            let diffArray = jsPsych.data.get().filter({trial_type: 'free-text-ranked-list-datalist'}).last(1);
+                            console.log(diffArray);  // This will print an array of data objects for 'survey-text' trials
+                            console.log(diffArray.trials[0].response)
+                            return diffArray.trials[0].response;
                         },
                         starting_sliders: function(){
-                            let array = jsPsych.data.get().last(3);
-                            return array.trials[0].sliderValues
+                            let diffArray = jsPsych.data.get().filter({trial_type: 'free-text-ranked-list-datalist'}).last(1);
+                            console.log(diffArray.trials[0].sliderValues)
+                            return diffArray.trials[0].sliderValues;
                         },
                         starting_scales: function(){
-                            let array = jsPsych.data.get().last(3);
-                            return array.trials[0].scaleValues
+                            let diffArray = jsPsych.data.get().filter({trial_type: 'free-text-ranked-list-datalist'}).last(1);
+                            console.log(diffArray.trials[0].scaleValues)
+                            return diffArray.trials[0].scaleValues;
                         },
                         on_load: ()=>{
                             exp.showCaseNumber();
@@ -1091,9 +1009,9 @@
                         }
                     }
                     trial.push(differentialsStage);
-                }
 
-                trial.push(confidence);
+                    trial.push(confidence);
+                }
             }
         }   
         else
@@ -1107,9 +1025,9 @@
         }
 
         // SHOW FEEDBACK
+        timeline.push(reasoningStrategySelfAnalysis)
 
         let feedbackMessage = "<p> The correct country was: ";
-        let country = shuffledScenarios[x]["TrueCountry"];
         feedbackMessage = feedbackMessage + country;
         let showFeedback = {
 	        type: jsPsychInstructions,

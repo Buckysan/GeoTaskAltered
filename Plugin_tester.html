@@ -5,40 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>jsPsych Plugin Test</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jspsych@7.0.0/css/jspsych.css">
-    <script src="./src/utils.js"></script>
-    <script src="./src/nonMedScenarios.js"></script>
-    <script src="./src/scenarioFileTutorial.js"></script>
-    <script src="./src/src.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="./jspsych/dist/jspsych.js" type="text/javascript"></script>
     <script src="./jspsych/dist/plugin-image-button-response.js" type="text/javascript"></script>
-    <script src="./jspsych/dist/plugin-image-button-response-altered.js" type="text/javascript"></script>   
     <script src="./jspsych/dist/plugin-instructions.js" type="text/javascript"></script>
-    <script src="./jspsych/dist/plugin-survey-multi-choice.js" type="text/javascript"></script>
-    <script src="./jspsych/dist/plugin-survey-multi-select.js" type="text/javascript"></script>
-    <script src="./jspsych/dist/plugin-survey-multi-select-limit-sliders.js" type="text/javascript"></script>
-    <script src="./jspsych/dist/plugin-survey-text.js" type="text/javascript"></script>
-    <script src="./jspsych/dist/plugin-canvas-slider-response.js" type="text/javascript"></script>
-    <script src="./jspsych/dist/plugin-canvas-slider-response-with-buttons.js" type="text/javascript"></script>
-    <script src="./jspsych/dist/plugin-free-text-ranked-list.js" type="text/javascript"></script>
     <script src="./jspsych/dist/plugin-free-text-ranked-list-datalist.js" type="text/javascript"></script>
     <link rel="stylesheet" href="./style/styleIST.css"/>
-    <link rel="shortcut icon" href="#" />
 </head>
-<body class="jspsych-display-element" tabindex="0" style="margin: 0; height: 100%; width: 100%;">
-    <div class="jspsych-content-wrapper" style="height: 100vh;">
-        <div id="jspsych-content" class="jspsych-content">
-            <h1 id="initHeader">Loading...</h1>
-            <p id="initText">If you continue to see this message after around 10 seconds, something has gone wrong. In order to run
-                properly the experiment requires a modern browser with javascript enabled.</p>
-        </div>
-    </div>
-<div id="jspsych-target"></div>
-
+<body class="jspsych-display-element" style="margin: 0; height: 100%; width: 100%;">
+    <div id="jspsych-target"></div>
+    
 <script>
-    const countryList = [
-        "Afghanistan", "Albania", "Algeria", "Zimbabwe"
-    ];
+    let timeline = [];
+    const countryList = ["AFGHANISTAN", "ALBANIA", "ALGERIA", "ZIMBABWE"];
+    let guessFeedback = true;
 
     // Initialize jsPsych
     var jsPsych = initJsPsych({
@@ -47,7 +27,6 @@
         }
     });
 
-    // Example default values for missing variables
     const sliderLabels = ["Least", "Most"];
     const sliderName = "Country Preference";
     const scaleLabels = ["1", "2", "3", "4", "5"];
@@ -55,9 +34,15 @@
     const addButtonPrompt = "Add more countries";
     const scaleError = "Please rate the importance";
 
-    // Define the custom plugin trial
-    var trial = {
-        type: jsPsychFreeTextRankedListDatalist,  // Replace with correct plugin reference
+    let feedback = {
+        type: jsPsychInstructions,
+        pages: ['Your highest ranked option is not the correct answer'],
+        show_clickable_nav: true,
+        allow_backward: false,
+    };
+
+    let differentialTrial = {
+        type: jsPsychFreeTextRankedListDatalist,  
         prompt: "<p>Input your list of countries:</p>",
         slider_labels: sliderLabels,
         slider_start: 5,
@@ -70,21 +55,65 @@
         blank_scale_error: scaleError,
         draggable_list: false,
         suggestion_list: countryList,
-        on_load: function(){
-            console.log("Trial loaded");
-        },
-        on_finish: function(trial){
-            responsesArray.push(data.response);
-            console.log(responsesArray);
+        on_finish: function(data) {
+            let maxSliderValue = Math.max(...data.sliderValues);
+            let maxResponses = data.response.filter((_, index) => data.sliderValues[index] === maxSliderValue);
+            jsPsych.data.addProperties({
+                highest_slider_responses: maxResponses,
+                highest_slider_value: maxSliderValue
+            });
         }
     };
 
-    // Define a timeline
-    var timeline = [trial];
+    let differentialTrialWithMemory = {
+        ...differentialTrial, // Inherit properties from differentialTrial
+        start_empty: false,
+        starting_list: function() {
+            let diffArray = jsPsych.data.get().filter({trial_type: 'free-text-ranked-list-datalist'}).last(1);
+            console.log(diffArray);  // This will print an array of data objects for 'survey-text' trials
+            console.log(diffArray.trials[0].response)
+            return diffArray.trials[0].response;
+        },
+        starting_sliders: function(){
+            let diffArray = jsPsych.data.get().filter({trial_type: 'free-text-ranked-list-datalist'}).last(1);
+            console.log(diffArray.trials[0].sliderValues)
+            return diffArray.trials[0].sliderValues;
+        },
+        starting_scales: function(){
+            let diffArray = jsPsych.data.get().filter({trial_type: 'free-text-ranked-list-datalist'}).last(1);
+            console.log(diffArray.trials[0].scaleValues)
+            return diffArray.trials[0].scaleValues;
+        },
+        on_finish: () => {
+            let array =[]
+        }
+    };
 
-    // Start the experiment
+    for (let x = 0; x < 3; x++) {
+        let trial = [];
+
+        if (x === 0) {
+            trial.push(differentialTrial);
+
+            let feedbackCondition = {
+                timeline: [feedback],
+                conditional_function: function() {
+                    let data = jsPsych.data.getLastTrialData().values()[0];
+                    let highestResponses = data.highest_slider_responses;
+                    return !highestResponses.includes('ZIMBABWE') && guessFeedback;
+                    console.log('yes')
+                }
+            };
+            trial.push(feedbackCondition);
+        } else {
+            trial.push(differentialTrialWithMemory);
+        }
+
+        timeline.push({ timeline: trial });
+    }
+
     jsPsych.run(timeline);
-</script>
 
+</script>
 </body>
 </html>
