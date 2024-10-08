@@ -69,10 +69,10 @@
     // You can control the whole program for here by changing the value
     // of the parameters here.
 
-    const betaTest = true; // If true, only shows a single trial for testing purposes.
-    const doInstruct = false; // If true, shows instructions.
+    const betaTest = false; // If true, only shows a single trial for testing purposes.
+    const doInstruct = true; // If true, shows instructions.
     const doQuestionnaire = true; // If true, includes questionnaires. (Currently decision making styles and Big Five)
-    const demoQuestions = false; // If true, asks participants for age, gender and medical experience.
+    const demoQuestions = true; // If true, asks participants for age, gender and medical experience.
     const doDebrief = true; // If true, run debrief questionnaire at the end.
     const doFeedback = true; //If true, shows what the answers to each trial at the end of the experiment.
     const timeLimit = false; // If true, set a time limit for participants before they are forced to make a decision.
@@ -82,7 +82,7 @@
     const numOfInformationStages = 3; // Number of stages that infomration is presented in. Only relevant if informationStages is true.
     const pastInformationAvailable = true; // If true, at each information stage, all information from the previous stage is available to view. If false, only the current stage's information is available.
     const randomiseOrder = true; // If true, shuffles the order of information shown on screen for each trial and information stage. If false, the order is fixed to the order in which information are shown in the scenario files.
-    const runTutorial = false; // If true, runs a tutorial for the experiment before the main trials.
+    const runTutorial = true; // If true, runs a tutorial for the experiment before the main trials.
 
     //////////////
     // Future additions (?): multiple cases interleaved, out of order information
@@ -226,8 +226,8 @@
         window.location.replace(endRedirectURL);
     }});
     
-    //var feedbackGroup = Math.random() < 0.5 ? true : false
-    var feedbackGroup = true
+    var feedbackGroup = Math.random() < 0.5 ? true : false
+    //var feedbackGroup = true
     console.log(feedbackGroup)
     jsPsych.data.addProperties({
         isInFeedbackGroup : feedbackGroup,
@@ -380,7 +380,7 @@
     }
 
     const tutorialCase = {
-        type: jsPsychImageButtonResponse,
+        type: jsPsychImageButtonResponseAltered,
         stimulus: '',
         choices: buttons,
         response_ends_trial: false,
@@ -398,7 +398,7 @@
     }
 
     const infoSeeking = {
-        type: jsPsychImageButtonResponse,
+        type: jsPsychImageButtonResponseAltered,
         stimulus: '',
     	choices: buttons,
     	response_ends_trial: false,
@@ -441,10 +441,11 @@
     const feedback = {
         type: jsPsychInstructions,
         pages: [
-            'Your highest ranked option is not the correct answer'
+            '<p><STRONG>USESFUL HINT:</STRONG></p><p>Your highest ranked option is not the correct answer.</p>'
         ],
         show_clickable_nav: true,
         allow_backward: false,
+        css_classes: ['jspsych-middle'],
         on_load: ()=>exp.fullscreenMode(),
         on_finish: (trial)=>{
             exp.fullscreenMode();
@@ -649,6 +650,19 @@
             exp.fullscreenMode();
         }
     };
+
+    const hintNotif = {
+        type: jsPsychInstructions,
+         pages: [
+            "<p>You are about to begin the main experiment.</p><p>During some trials, there may be a <strong>USEFUL HINT</strong> that will give you information about your guesses.</p>"
+         ],
+         show_clickable_nav: true,
+        allow_backward: false,
+        on_load: ()=>exp.fullscreenMode(),
+        on_finish: (trial)=>{
+            exp.fullscreenMode();
+        }
+    }
 
     // const showFeedback = {
     //     type: jsPsychInstructions,
@@ -873,6 +887,7 @@
         timeline.push(preTutorialInstruct);
         timeline.push({timeline: tutorialTrial});
         timeline.push(postTutorialInstruct);
+        timeline.push(hintNotif);
     }
 
     //trial.unshift(caseIntro);
@@ -911,7 +926,7 @@
                 }
                 stageButtons.push(stopInfoSeekingButton);
                 var infoSeekingStage = {
-                    type: jsPsychImageButtonResponse,
+                    type: jsPsychImageButtonResponseAltered,
                     stimulus: '',
                     choices: stageButtons,
                     response_ends_trial: false,
@@ -951,13 +966,30 @@
                             
 
                             // If the highest ranked option does not include 'country' and guessFeedback is true and feedback is wanted on the specified trial number, show feedback
-                            if (!highestResponses.includes(allCapsCountry) /*&& feedbackGroup === true && feedbackCases.includes(x)*/) {
+                            if (!highestResponses.includes(allCapsCountry) && feedbackGroup === true && feedbackCases.includes(x)) {
                                 return true;  // Show feedback
                                 jsPsych.addProperties({
-                                    feedback_given: true + 'on trial number' + x
+                                    feedback_given: true + 'on trial number' + x,
+                                    elegible_for_feedback: true
+                                })
+                            } else if (highestResponses.includes(allCapsCountry) && feedbackGroup === true && feedbackCases.includes(x)) {
+                                return false
+                                jsPsych.addProperties({
+                                    feedback_given: false + 'on trial number' + x,
+                                    elegible_for_feedback: false
+                                })
+                            } else if (!highestResponses.includes(allCapsCountry) && feedbackGroup === false && feedbackCases.includes(x)) {
+                                return false; // Skip feedback
+                                jsPsych.addProperties({
+                                    feedback_given: false + 'on trial number' + x,
+                                    elegible_for_feedback: true
                                 })
                             } else {
                                 return false; // Skip feedback
+                                jsPsych.addProperties({
+                                    feedback_given: false + 'on trial number' + x,
+                                    elegible_for_feedback: false
+                                })
                             }
                         },
                     };

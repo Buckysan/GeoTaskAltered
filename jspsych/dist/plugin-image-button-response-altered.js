@@ -4,7 +4,7 @@
 * It also allows certain data from a file to be shown on a button press.
 */
 
-var jsPsychImageButtonResponse = (function (jspsych) {
+var jsPsychImageButtonResponseAltered = (function (jspsych) {
     'use strict';
   
     const info = {
