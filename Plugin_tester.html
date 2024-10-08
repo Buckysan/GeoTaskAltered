@@ -41,6 +41,24 @@
         allow_backward: false,
     };
 
+    var infoSeeking = {
+            type: jsPsychImageButtonResponseAltered,
+            stimulus: '',
+            choices: stageButtons,
+            response_ends_trial: false,
+            scenarioObject: tutorialScenario,
+            endButton: stopInfoSeekingButton,
+            prompt: "<p>Above you will find a series of information that you can request.</p><p>Information is split into three stages: Geography, Economy & Politics and People & Culture. To start with, only Geography is available to view. Click on Geography to view the available information requests. Clicking on each will reveal that information on screen. The information will take a little while to load. </p><p> When you are done seeking information and ready to record your guesses for the country, click on ENTER COUNTRIES.</p>",
+            shuffle_buttons: randomiseOrder,
+            button_delay: infoDelay,
+            on_load: () => {
+                exp.fullscreenMode();
+            },
+            on_finish: (trial)=>{
+                exp.fullscreenMode();
+            }
+        };
+
     let differentialTrial = {
         type: jsPsychFreeTextRankedListDatalist,  
         prompt: "<p>Input your list of countries:</p>",
@@ -93,6 +111,7 @@
         let trial = [];
 
         if (x === 0) {
+            trial.push(infoSeeking)
             trial.push(differentialTrial);
 
             let feedbackCondition = {

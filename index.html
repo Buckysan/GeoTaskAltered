@@ -69,10 +69,10 @@
     // You can control the whole program for here by changing the value
     // of the parameters here.
 
-    const betaTest = false; // If true, only shows a single trial for testing purposes.
-    const doInstruct = true; // If true, shows instructions.
+    const betaTest = true; // If true, only shows a single trial for testing purposes.
+    const doInstruct = false; // If true, shows instructions.
     const doQuestionnaire = true; // If true, includes questionnaires. (Currently decision making styles and Big Five)
-    const demoQuestions = true; // If true, asks participants for age, gender and medical experience.
+    const demoQuestions = false; // If true, asks participants for age, gender and medical experience.
     const doDebrief = true; // If true, run debrief questionnaire at the end.
     const doFeedback = true; //If true, shows what the answers to each trial at the end of the experiment.
     const timeLimit = false; // If true, set a time limit for participants before they are forced to make a decision.
@@ -82,7 +82,7 @@
     const numOfInformationStages = 3; // Number of stages that infomration is presented in. Only relevant if informationStages is true.
     const pastInformationAvailable = true; // If true, at each information stage, all information from the previous stage is available to view. If false, only the current stage's information is available.
     const randomiseOrder = true; // If true, shuffles the order of information shown on screen for each trial and information stage. If false, the order is fixed to the order in which information are shown in the scenario files.
-    const runTutorial = true; // If true, runs a tutorial for the experiment before the main trials.
+    const runTutorial = false; // If true, runs a tutorial for the experiment before the main trials.
 
     //////////////
     // Future additions (?): multiple cases interleaved, out of order information
@@ -108,7 +108,7 @@
     const stopInfoSeekingButton = "ENTER COUNTRIES";
     const endFeedback = "Thank you again for participating in our experiment. You have completed all trials! Below, you will find the correct countries for each trial:";
     const confidenceMessage = "Record how confident you are that you have the right country in your list.";
-    const infoDelay = 500; //delay to receiving information, in ms.
+    const infoDelay = 0; //delay to receiving information, in ms.
 
 
     ////////////////////////////////////////////
@@ -226,7 +226,8 @@
         window.location.replace(endRedirectURL);
     }});
     
-    var feedbackGroup = Math.random() < 0.5 ? true : false
+    //var feedbackGroup = Math.random() < 0.5 ? true : false
+    var feedbackGroup = true
     console.log(feedbackGroup)
     jsPsych.data.addProperties({
         isInFeedbackGroup : feedbackGroup,
@@ -703,7 +704,6 @@
             prompt: "<p>Above you will find a series of information that you can request.</p><p>Information is split into three stages: Geography, Economy & Politics and People & Culture. To start with, only Geography is available to view. Click on Geography to view the available information requests. Clicking on each will reveal that information on screen. The information will take a little while to load. </p><p> When you are done seeking information and ready to record your guesses for the country, click on ENTER COUNTRIES.</p>",
             shuffle_buttons: randomiseOrder,
             button_delay: infoDelay,
-            required_clicks: 2,
             on_load: () => {
                 exp.fullscreenMode();
             },
@@ -869,7 +869,7 @@
             }
         }
         tutorialTrial.push(confidenceTutorialStage3);
-
+        
         timeline.push(preTutorialInstruct);
         timeline.push({timeline: tutorialTrial});
         timeline.push(postTutorialInstruct);

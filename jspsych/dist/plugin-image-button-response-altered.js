@@ -4,18 +4,12 @@
 * It also allows certain data from a file to be shown on a button press.
 */
 
-var jsPsychImageButtonResponseAltered = (function (jspsych) {
+var jsPsychImageButtonResponse = (function (jspsych) {
     'use strict';
   
     const info = {
-        name: "image-button-response-altered",
+        name: "image-button-response",
         parameters: {
-            /** Parameter to control end button visibility based on nested button click */
-            show_end_button_only_after_click: {
-                type: jspsych.ParameterType.BOOL,
-                pretty_name: "Show end button only after click",
-                default: true,
-            },
             /** The image to be displayed */
             stimulus: {
                 type: jspsych.ParameterType.IMAGE,
@@ -230,7 +224,21 @@ var jsPsychImageButtonResponseAltered = (function (jspsych) {
                 }
                 // add buttons to screen
                 display_element.insertBefore(btngroup_div, canvas.nextElementSibling);
-  
+                
+                // Ensure all buttons are enabled except the end button
+                buttons = display_element.querySelectorAll("button");
+
+                buttons.forEach((button, index) => {
+                    // Compare the choice's text to trial.endButton
+                    if (trial.choices[index] === trial.endButton) {
+                        // Disable the end button
+                        button.disabled = true;
+                        console.log(`End button found and disabled: ${trial.choices[index]}`);
+                    } else {
+                        // Enable all other buttons
+                        button.disabled = false;
+                    }
+                });
                 // add prompt if there is one
                 if (trial.prompt !== null) {
                     display_element.insertAdjacentHTML("beforeend", trial.prompt);
@@ -307,6 +315,10 @@ var jsPsychImageButtonResponseAltered = (function (jspsych) {
             let count = 1;
             for (var i = 0; i < trial.choices.length; i++) {
                 let button = display_element.querySelector("#jspsych-image-button-response-button-" + i);
+                if (trial.choices[i] === trial.endButton) {
+                    // Initially disable the end button
+                    button.querySelector("button").disabled = true;
+                }
                 button.addEventListener("click", (e) => {
                     // when a button is clicked.
                     var btn_el = e.currentTarget;
@@ -329,20 +341,13 @@ var jsPsychImageButtonResponseAltered = (function (jspsych) {
                     }
                     display_element.querySelector("#jspsych-image-button-response-stimulus").className +=
                     " responded";
-                    
-    // Render the end button initially but disabled and greyed out
-    if (!trial.show_end_button_only_after_click) {
-        html += '<button id="end-btn" class="jspsych-btn">End</button>';
-    } else {
-        // Render the end button but disabled and with opacity
-        html += '<button id="end-btn" class="jspsych-btn" disabled style="opacity: 0.5;">End</button>';
-    }
-    if (document.querySelector("#jspsych-image-button-response-btngrouplevel2") === null)
-                    {
-                      var end_time = performance.now();
-                      var rt = Math.round(end_time - start_time);
-                      response.totalTime = parseInt(rt);
-                      end_trial();
+                    if (txt == trial.endButton) {
+                        if (!button.querySelector("button").disabled) {  // Ensure it isn't disabled
+                            var end_time = performance.now();
+                            var rt = Math.round(end_time - start_time);
+                            response.totalTime = parseInt(rt);
+                            end_trial();
+                        };
                     }
                     else
                     {
@@ -380,78 +385,69 @@ var jsPsychImageButtonResponseAltered = (function (jspsych) {
                           }
                           entries = array;
                       }
-                      for (const [innerkey, value] of entries) 
-                      {
+
+                      // Now bind the nested buttons immediately
+                    let count = 1;
+                    entries.forEach(([innerkey, value]) => {
                         let btnDiv = divGroup.appendChild(document.createElement("div"));
                         btnDiv.className = "jspsych-image-button-response-button-level2";
                         btnDiv.id = "jspsych-image-button-response-button-level2-" + count;
                         let innerBtn = btnDiv.appendChild(document.createElement("button"));
                         innerBtn.innerHTML = innerkey;
                         innerBtn.id = "Test" + (innerkey.replace(/\s/g, ''));
-                        innerBtn.className = "jspsych-btn"
+                        innerBtn.className = "jspsych-btn";
                         innerBtn.value = count;
                         innerBtn.style = "display: inline-block; margin:7px 8px";
-                        (response.tests).push(innerkey);
-                        innerBtn.addEventListener("click", (e) => 
-                        {
-                          // if (canvas.querySelector('p') != null)
-                          // {
-                          //   canvas.querySelector('p').remove();
-                          // }
-                          if (canvas.querySelector('#currentRes') != null)
-                          {
-                            canvas.querySelector('#currentRes').remove();
-                          }
-  
-                          (response.buttons).push(innerBtn.value);
-                          let timeNow = performance.now();
-                          var rt = Math.round(timeNow - start_time);
-                          (response.rt).push(parseInt(rt));
-                          let output = testObject[innerkey]["Output"];
-                          let duration = testObject[innerkey]["Duration"];
-                          response.totalTestDuration = response.totalTestDuration + duration;
-                          if (output.includes(".jpg"))
-                          {
-                            let testRes = innerBtn.appendChild(document.createElement("img"));
-                            testRes.src = "./assets/" + output;
-                            testRes.style = "height: 30em; width: 50em";
-                            testRes.id = "currentRes";
-                          }
-  
-                          else
-                          {
-                            // need to add different test results depending on image/text/audio
-                            if (trial.button_delay == 0)
-                            {
-                              let testRes = innerBtn.appendChild(document.createElement("p"));
-                              testRes.innerHTML = output
-                              testRes.id = "currentRes";
-                              testRes.style = "color: blue;";
+
+                        // Event listener for nested button
+                        innerBtn.addEventListener("click", (e) => {
+                            // Remove previous result if any
+                            if (canvas.querySelector('#currentRes') != null) {
+                                canvas.querySelector('#currentRes').remove();
                             }
-                            else
-                            {
-                              // prevent multiple being clicked whilst loading.
-                              if (canvas.querySelector('#loading') == null)
-                              {
-                                let loading = innerBtn.appendChild(document.createElement("img"));
-                                loading.id = "loading";
-                                loading.src = "./assets/loading.gif";
-                                loading.style = "height: 2em; width: 2em";
-                                setTimeout(function(){
-                                  var canvas = document.querySelector('#jspsych-content');
-                                  canvas.querySelector('#loading').remove();
-                                  let testRes = innerBtn.appendChild(document.createElement("p"));
-                                  testRes.innerHTML = output
-                                  testRes.id = "currentRes";
-                                  testRes.style = "color: blue;";
-  
-                                },trial.button_delay);
-                              }
+
+                            // Display the output (image or text)
+                            (response.buttons).push(innerBtn.value);
+                            let timeNow = performance.now();
+                            var rt = Math.round(timeNow - start_time);
+                            (response.rt).push(parseInt(rt));
+                            let output = testObject[innerkey]["Output"];
+                            let duration = testObject[innerkey]["Duration"];
+                            response.totalTestDuration += duration;
+
+                            if (output.includes(".jpg")) {
+                                let testRes = innerBtn.appendChild(document.createElement("img"));
+                                testRes.src = "./assets/" + output;
+                                testRes.style = "height: 30em; width: 50em";
+                                testRes.id = "currentRes";
+                            } else {
+                                let testRes = innerBtn.appendChild(document.createElement("p"));
+                                testRes.innerHTML = output;
+                                testRes.id = "currentRes";
+                                testRes.style = "color: blue;";
                             }
-                          }
+
+                            // Enable the end button after a nested button is clicked
+                            let buttons = display_element.querySelectorAll("button");
+                            let endButton = null;
+
+                            // Loop over the buttons to find the one with the correct text
+                            buttons.forEach((button) => {
+                                if (button.textContent.trim() === trial.endButton) {
+                                    endButton = button;
+                                }
+                            });
+
+                            if (endButton) {
+                                endButton.disabled = false;
+                                console.log(`End button is now enabled: ${trial.endButton}`);
+                            } else {
+                                console.error('End button not found!');
+                            }
                         });
-                        count = count + 1;
-                      }
+
+                        count++;
+                    });
                     }
                 });
             }
@@ -534,3 +530,4 @@ var jsPsychImageButtonResponseAltered = (function (jspsych) {
     return ImageButtonResponsePlugin;
   
   })(jsPsychModule);
+  
