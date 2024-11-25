@@ -71,7 +71,7 @@
 
     const betaTest = false; // If true, only shows a single trial for testing purposes.
     const doInstruct = true; // If true, shows instructions.
-    const doQuestionnaire = true; // If true, includes questionnaires. (Currently decision making styles and Big Five)
+    const doQuestionnaire = false; // If true, includes questionnaires. (Currently decision making styles and Big Five)
     const demoQuestions = true; // If true, asks participants for age, gender and medical experience.
     const doDebrief = true; // If true, run debrief questionnaire at the end.
     const doFeedback = true; //If true, shows what the answers to each trial at the end of the experiment.
@@ -123,7 +123,7 @@
     "DOMINICAN REPUBLIC", "ECUADOR", "EGYPT", "EL SALVADOR", "EQUATORIAL GUINEA", "ERITREA", "ESTONIA", "ESWATINI", "ETHIOPIA", 
     "FIJI", "FINLAND", "FRANCE", "GABON", "GAMBIA", "GEORGIA", "GERMANY", "GHANA", "GREECE", "GRENADA", "GUATEMALA", "GUINEA", 
     "GUINEA-BISSAU", "GUYANA", "HAITI", "HONDURAS", "HUNGARY", "ICELAND", "INDIA", "INDONESIA", "IRAN", "IRAQ", "IRELAND", "ISRAEL", 
-    "ITALY", "JAMAICA", "JAPAN", "JORDAN", "KAZAKHSTAN", "KENYA", "KIRIBATI", "KOREA (NORTH)", "KOREA (SOUTH)", "KUWAIT", "KYRGYZSTAN", 
+    "ITALY", "JAMAICA", "JAPAN", "JORDAN", "KAZAKHSTAN", "KENYA", "KIRIBATI", "NORTH KOREA", "SOUTH KOREA ", "KUWAIT", "KYRGYZSTAN", 
     "LAOS", "LATVIA", "LEBANON", "LESOTHO", "LIBERIA", "LIBYA", "LIECHTENSTEIN", "LITHUANIA", "LUXEMBOURG", "MADAGASCAR", "MALAWI", 
     "MALAYSIA", "MALDIVES", "MALI", "MALTA", "MARSHALL ISLANDS", "MAURITANIA", "MAURITIUS", "MEXICO", "MICRONESIA", "MOLDOVA", 
     "MONACO", "MONGOLIA", "MONTENEGRO", "MOROCCO", "MOZAMBIQUE", "MYANMAR", "NAMIBIA", "NAURU", "NEPAL", "NETHERLANDS", 
@@ -235,7 +235,7 @@
 
     const browserInstruct = {
         type: jsPsychInstructions,
-        pages: ["<p>Please do not use the back or forward buttons on your browser during the experiment. Data on your performance will not save until the end of the experiment so do not close your browser unless you would no longer like to participate.</p>" + "<p>This study should take around half an hour, so please make sure you have enough time and are in a quiet place where you are unlikely to be interrupted.</p>" + "<p>Thank you for your cooperation!</p>" + "<p>Press Next to begin.</p>"],
+        pages: ["<p>Please do not use the back or forward buttons on your browser during the experiment. Data on your performance will not save until the end of the experiment so do not close your browser unless you would no longer like to participate.</p>" + "<p>This study should take around 40 minutes, so please make sure you have enough time and are in a quiet place where you are unlikely to be interrupted.</p>" + "<p>Thank you for your cooperation!</p>" + "<p>Press Next to begin.</p>"],
         show_clickable_nav: true,
         allow_backward: false
     };
@@ -342,8 +342,8 @@
         type: jsPsychInstructions,
          pages: [
              "<p>Thank you again for participating in this study! " +
-             "<p>During the main task, you will trying to identify a country based on a set of information you receive about it. As each trial progresses, you will record which countries you are considering at that point in time. Your performance will be assessed not only on the getting the right country but also the number of pieces of information you request. <strong style='font-size: larger;'>Hence, only request information that you will think will be helpful to you in identifying the country.</strong></p>" + 
-             "<p>You will start with a sample trial as a tutorial for this study." +
+             "<p>During the main task, you will trying to identify a country based on a set of information you receive about it. As each trial progresses, you will record which countries you are considering at that point in time. <strong style='font-size: larger;'>You must seek at least one clue in every stage of the experiment.</strong></p>" + 
+             "<p>You will start with a sample round as a tutorial for this study." +
             "<p>Click 'next' to proceed.</p>"
         ],
         show_clickable_nav: true,
@@ -386,7 +386,7 @@
         response_ends_trial: false,
         scenarioObject: tutorialScenario,
         endButton: stopInfoSeekingButton,
-        prompt: "<p>Below you will find a series of information that you can request.</p><p>Information is split into three stages: Geography, Economy & Politics and People & Culture. To start with, only Geography is available to view. Click on Geography to view the available information. Clicking on each will reveal that information on screen for the country you are trying to guess. </p><p> When you are done seeking information and ready to record the countries you think it could be, click on ENTER COUNTRIES.",
+        prompt: "<p>Below you will find a series of clues that you can request.</p><p>Clues are split into three stages: Geography, Economy & Politics and People & Culture. To start with, only Geography is available to view. Click on Geography to view the available clues. Clicking on each clue will reveal that clue on screen for the country you are trying to guess. You can ask for as many clues as you want, but you must click on at least one clue in each stage before you record your guesses. </p><p> When you are done asking for clues in each stage and are ready to record the countries you think it could be, click on ENTER COUNTRIES.",
         shuffle_buttons: randomiseOrder,
         button_delay: infoDelay,
         on_load: ()=>{  
@@ -403,7 +403,7 @@
     	choices: buttons,
     	response_ends_trial: false,
     	scenarioObject: exp.currentSubtrial.trialInfoSet,
-    	prompt: "<p>Click a button to gather information or click ENTER COUNTRIES to report your final answer.</p>",
+    	prompt: "<p>Click a button to ask for clues or click ENTER COUNTRIES after you have clicked on at least one clue to report your final answer.</p>",
         shuffle_buttons: randomiseOrder,
         endButton: stopInfoSeekingButton,
         button_delay: infoDelay,
@@ -441,7 +441,7 @@
     const feedback = {
         type: jsPsychInstructions,
         pages: [
-            '<p><STRONG>USESFUL HINT:</STRONG></p><p>Your highest ranked option is not the correct answer.</p>'
+            '<p><STRONG>USEFUL HINT:</STRONG></p><p>Your highest ranked option is not the correct answer.</p>'
         ],
         show_clickable_nav: true,
         allow_backward: false,
@@ -455,11 +455,11 @@
     const reasoningStrategySelfAnalysis = 
     {
         type: jsPsychSurveyMultiChoice,
-        preamble: "The following questions relate to how you chose your . Please rate the following statements from Strongly Disagree to Strongly Agree:",
+        preamble: "The following questions relate to how you reached your countries. Please rate the following statements from Strongly Disagree to Strongly Agree:",
         questions:[
-            {name: "SR", prompt: "I used the information to exclude countries and narrow down the range of possible guesses to get the country based off of knowledge of commonalities between countries. ", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
-            {name: "HDR", prompt: "I formed a rough guess based on initial information and then sought information to affirm or deny its viability.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
-            {name: "PR", prompt: "The information I chose, either as a stand alone or in combination with other pieces of information, was tell-tale of a certain predictable country and allowed me to quickly evaluate it.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "SR", prompt: "I used a framework or system for considering groups of countries in turn. ", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "HDR", prompt: "I formed an initial list of countries, then I chose clues to exclude countries from my list and confirmed a final guess by a process of elimination.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
+            {name: "PR", prompt: "Based on the information I chose; I formed a picture of the country and created a list based on the countries that fit this picture.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
         ],
         randomize_question_order: true,
         button_label: "Submit",
@@ -569,7 +569,7 @@
             };
             console.log(recentData);
             // This will give you the trial data object directly, instead of an array containing the object.
-            let maxSliderValue = Math.max(recentData.sliderValues);
+            let maxSliderValue = Math.max(...recentData.sliderValues);
             let maxResponses = recentData.response.filter((_, index) => recentData.sliderValues[index] === maxSliderValue);
             // Add the highest slider value and responses to jsPsych data for this trial
             jsPsych.data.addProperties({
@@ -887,7 +887,11 @@
         timeline.push(preTutorialInstruct);
         timeline.push({timeline: tutorialTrial});
         timeline.push(postTutorialInstruct);
-        timeline.push(hintNotif);
+
+        if (feedbackGroup === true) {
+            timeline.push(hintNotif);
+        }
+        
     }
 
     //trial.unshift(caseIntro);
@@ -956,40 +960,42 @@
                             // Check the most recent response data
                             let lastData = jsPsych.data.get().filter({trial_type: 'free-text-ranked-list-datalist'}).last(1).values()[0]; // Extract the object from the array
                             let highestResponses = [];
-                            // No need to check if lastData is an array, because it's an object
-                            if (lastData && lastData.highest_slider_responses) {
-                                let highestResponses = lastData.highest_slider_responses[0]; // Access the first element in the array
-                                console.log(highestResponses);
-                            }
+                            highestResponses = lastData.highest_slider_responses; // Access the first element in the array
+                            console.log(highestResponses);
+
                             let allCapsCountry = country.toUpperCase();
                             console.log(allCapsCountry)
-                            
 
                             // If the highest ranked option does not include 'country' and guessFeedback is true and feedback is wanted on the specified trial number, show feedback
                             if (!highestResponses.includes(allCapsCountry) && feedbackGroup === true && feedbackCases.includes(x)) {
-                                return true;  // Show feedback
-                                jsPsych.addProperties({
+                                console.log(typeof !highestResponses.includes(allCapsCountry))
+                                console.log(!highestResponses.includes(allCapsCountry))
+                                jsPsych.data.addProperties({
                                     feedback_given: true + 'on trial number' + x,
                                     elegible_for_feedback: true
                                 })
+                                console.log('1')
+                                return true;  // Show feedback
                             } else if (highestResponses.includes(allCapsCountry) && feedbackGroup === true && feedbackCases.includes(x)) {
-                                return false
-                                jsPsych.addProperties({
+                                jsPsych.data.addProperties({
                                     feedback_given: false + 'on trial number' + x,
                                     elegible_for_feedback: false
                                 })
+                                console.log('2')
+                                return false
                             } else if (!highestResponses.includes(allCapsCountry) && feedbackGroup === false && feedbackCases.includes(x)) {
-                                return false; // Skip feedback
-                                jsPsych.addProperties({
+                                jsPsych.data.addProperties({
                                     feedback_given: false + 'on trial number' + x,
                                     elegible_for_feedback: true
                                 })
-                            } else {
                                 return false; // Skip feedback
-                                jsPsych.addProperties({
+                            } else {
+                                jsPsych.data.addProperties({
                                     feedback_given: false + 'on trial number' + x,
                                     elegible_for_feedback: false
                                 })
+                                console.log('3')
+                                return false; // Skip feedback
                             }
                         },
                     };

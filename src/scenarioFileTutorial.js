@@ -109,7 +109,7 @@ let tutorialScenario =
             "Output": "Three",
             "Duration": 500
         },
-        "Which side of the car do people drive on?": {
+        "Which side of the road do people drive on?": {
             "Output": "Left",
             "Duration": 20
         },
