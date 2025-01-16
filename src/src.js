@@ -53,6 +53,8 @@ class Structure {
         this.trueConditions = [];
         this.difficulties = [];
         this.reasoning = [];
+        this.feedbackElegible = [];
+        this.feedbackGiven = [];
         this.differentials = [];
         this.trials = typeof args.scenarioObject === 'undefined' ? [] : Structure.addTrials(this.scenarioObject, this.numOfSubtrials*this.numOfTrials, this.expConditionOrder, this.numOfSubtrials, this.corrects);
     }
@@ -192,14 +194,14 @@ class Structure {
 
     saveReasoningStrategy(trial)
     {
-        this.reasoning = trial.response
+        this.reasoning.push(trial.response)
     }
 
-    
+
     saveFeedbackStatus(trial)
     {
-        this.currentSubtrial.feedbackGiven = trial.feedback_given;
-        this.currentSubtrial.feedbackElegible = trial.elegible_for_feedback
+        this.feedbackGiven.push(trial.feedback_given);
+        this.feedbackElegible.push(trial.elegible_for_feedback)
     }
 
     saveFinalDecision(trial)
@@ -324,7 +326,7 @@ class Structure {
         // Trials
         let trialData = [];
         for (let t=0; t<this.currentSubtrialIndex; t++)
-            trialData.push(this.flattenTrialData(data.trials[t], participantData.id, t));
+            trialData.push(this.flattenTrialData(data.trials[t], participantData.id, data.feedback, t)); // could be feedback group
         participantData.trials = trialData;
 
         // Debrief stuff
@@ -362,7 +364,7 @@ class Structure {
             out.hypothesisOptions = trial.hypothesisOptions;
         }
         out.requestedInfoIdxs = trial.requestedInfo;
-        out.requestedInfoText = (trial.requestedInfo).map(i => trial.availableInfo[i-1])//need to debug
+        out.requestedInfoText = (trial.requestedInfo).map(i => trial.availableInfo[i-1])
         out.numOfRequestedInfo = trial.requestedInfo.length;
         out.availableInfo = trial.availableInfo;
         out.rts = trial.rts;
@@ -373,9 +375,11 @@ class Structure {
         out.likelihoods = trial.likelihoods;
         out.differentialRT = trial.differentialRT;
         out.confidence = trial.confidence;
-        out.correct = out.trueCondition == out.finalDiagnosis ? 1 : 0;
+        //out.correct = out.trueCondition == out.finalDiagnosis ? 1 : 0;
         out.difficulty = this.difficulties[trialNum];
         out.reasoning = this.reasoning[trialNum];
+        out.feedbackElegible = trial.feedback_given;
+        out.elegibleForFeedback = trial.elegible_for_feedback;
         
         //let treatment = trial.treatmentPlan;
         //if (!treatment || treatment.length === 0 )

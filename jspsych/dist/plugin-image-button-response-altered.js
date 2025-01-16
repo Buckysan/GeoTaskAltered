@@ -398,7 +398,7 @@ var jsPsychImageButtonResponseAltered = (function (jspsych) {
                         innerBtn.className = "jspsych-btn";
                         innerBtn.value = count;
                         innerBtn.style = "display: inline-block; margin:7px 8px";
-
+                        (response.tests).push(innerkey);
                         // Event listener for nested button
                         innerBtn.addEventListener("click", (e) => {
                             // Remove previous result if any

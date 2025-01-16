@@ -169,7 +169,7 @@
         let participantID = window.location.search.match('[?&]ParticipantID=\\w+');
         if(participantID !== null)
         participantID = participantID[0].substring(15);
-        redirectURL = "http://localhost:8000/?consent=true&PROLIFIC_PID=test";
+        redirectURL = "acclab.psy.ox.ac.uk/~saiyer/GeoTaskAltered/";
         if(participantID !== null)
             redirectURL += "&ParticipantID=" + participantID;
         window.location.href =  redirectURL; // forward as if user clicked a link

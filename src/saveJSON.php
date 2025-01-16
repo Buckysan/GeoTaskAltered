@@ -50,7 +50,7 @@ $json = json_decode($json,true);
 $id = $json["id"];
 //$id = $json["processedData"]["advisors"]["participantId"]; 
 
-const PATH = "/Users/taigakawadawilliams/Documents/BMS/Coding/GeoTask-main/DATA/";
+const PATH = "./data/";
 $body = date('Y_m_d') . "_" . $id;
     //$filename = PATH . $body . ".json";
     //echo $filename;

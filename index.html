@@ -69,7 +69,7 @@
     // You can control the whole program for here by changing the value
     // of the parameters here.
 
-    const betaTest = false; // If true, only shows a single trial for testing purposes.
+    const betaTest = true; // If true, only shows a single trial for testing purposes.
     const doInstruct = true; // If true, shows instructions.
     const doQuestionnaire = false; // If true, includes questionnaires. (Currently decision making styles and Big Five)
     const demoQuestions = true; // If true, asks participants for age, gender and medical experience.
@@ -81,8 +81,8 @@
     const informationStages = true; // If true, present information in discrete stages. If false, present all information at once.
     const numOfInformationStages = 3; // Number of stages that infomration is presented in. Only relevant if informationStages is true.
     const pastInformationAvailable = true; // If true, at each information stage, all information from the previous stage is available to view. If false, only the current stage's information is available.
-    const randomiseOrder = true; // If true, shuffles the order of information shown on screen for each trial and information stage. If false, the order is fixed to the order in which information are shown in the scenario files.
-    const runTutorial = true; // If true, runs a tutorial for the experiment before the main trials.
+    const randomiseOrder = false; // If true, shuffles the order of information shown on screen for each trial and information stage. If false, the order is fixed to the order in which information are shown in the scenario files.
+    const runTutorial = false; // If true, runs a tutorial for the experiment before the main trials.
 
     //////////////
     // Future additions (?): multiple cases interleaved, out of order information
@@ -464,7 +464,7 @@
             exp.fullscreenMode();
         },
         on_finish: (trial)=>{
-            exp.saveResoningStrategy(trial);
+            exp.saveReasoningStrategy(trial);
             exp.exportGovernor();
         }
     }
@@ -999,7 +999,7 @@
                                 })
                                 exp.saveFeedbackStatus(trial)
                                 exp.exportGovernor(trial)
-                                console.log('3')
+                                console.log(exp.saveFeedbackStatus(trial))
                                 return false; // Skip feedback
                             }
                         },
@@ -1065,10 +1065,8 @@
         if (doDifficulty)
         {
             timeline.push(perceivedDifficulty);
+            timeline.push(reasoningStrategySelfAnalysis)
         }
-
-        // SHOW FEEDBACK
-        timeline.push(reasoningStrategySelfAnalysis)
 
         let feedbackMessage = "<p> The correct country was: ";
         feedbackMessage = feedbackMessage + country;
