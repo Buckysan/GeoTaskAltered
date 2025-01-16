@@ -198,6 +198,9 @@
     const queryString = window.location.search;
     var pid = queryString.split("ParticipantID=")[1]; // get participant ID from the URL
 
+    let feedbackGroup = Math.random() < 0.5 ? true : false
+    //var feedbackGroup = true
+    console.log(feedbackGroup)
 
     let exp = new Structure({ // main experiment object where we store data and then export for saving data.
     	numOfTrials: numOfScenarios,
@@ -213,7 +216,8 @@
         expConditionOrder: conditions,
         trialsCompleted: 0,
         complete: false,
-        participantID: pid
+        participantID: pid,
+        feedback: feedbackGroup,
     });
 
     const jsPsych = initJsPsych({ // initialise JSPsych
@@ -225,13 +229,6 @@
         exp.exportGovernor();
         window.location.replace(endRedirectURL);
     }});
-    
-    var feedbackGroup = Math.random() < 0.5 ? true : false
-    //var feedbackGroup = true
-    console.log(feedbackGroup)
-    jsPsych.data.addProperties({
-        isInFeedbackGroup : feedbackGroup,
-    });
 
     const browserInstruct = {
         type: jsPsychInstructions,
@@ -461,13 +458,13 @@
             {name: "HDR", prompt: "I formed an initial list of countries, then I chose clues to exclude countries from my list and confirmed a final guess by a process of elimination.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
             {name: "PR", prompt: "Based on the information I chose; I formed a picture of the country and created a list based on the countries that fit this picture.", required: true, horizontal: true, options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]},
         ],
-        randomize_question_order: true,
+        randomize_question_order: false,
         button_label: "Submit",
         on_load: ()=>{
             exp.fullscreenMode();
         },
         on_finish: (trial)=>{
-            exp.saveDecisionQuestions(trial);
+            exp.saveResoningStrategy(trial);
             exp.exportGovernor();
         }
     }
@@ -955,7 +952,7 @@
                     trial.push(confidence);
 
                     const guesslist_feedback_condition = {
-                        timeline: [feedback], // assuming feedback is a jsPsychInstructions trial
+                        timeline: [feedback], 
                         conditional_function: function() {
                             // Check the most recent response data
                             let lastData = jsPsych.data.get().filter({trial_type: 'free-text-ranked-list-datalist'}).last(1).values()[0]; // Extract the object from the array
@@ -974,6 +971,8 @@
                                     feedback_given: true + 'on trial number' + x,
                                     elegible_for_feedback: true
                                 })
+                                exp.saveFeedbackStatus(trial)
+                                exp.exportGovernor(trial)
                                 console.log('1')
                                 return true;  // Show feedback
                             } else if (highestResponses.includes(allCapsCountry) && feedbackGroup === true && feedbackCases.includes(x)) {
@@ -982,18 +981,24 @@
                                     elegible_for_feedback: false
                                 })
                                 console.log('2')
+                                exp.saveFeedbackStatus(trial)
+                                exp.exportGovernor(trial)
                                 return false
                             } else if (!highestResponses.includes(allCapsCountry) && feedbackGroup === false && feedbackCases.includes(x)) {
                                 jsPsych.data.addProperties({
                                     feedback_given: false + 'on trial number' + x,
                                     elegible_for_feedback: true
                                 })
+                                exp.saveFeedbackStatus(trial)
+                                exp.exportGovernor(trial)
                                 return false; // Skip feedback
                             } else {
                                 jsPsych.data.addProperties({
                                     feedback_given: false + 'on trial number' + x,
                                     elegible_for_feedback: false
                                 })
+                                exp.saveFeedbackStatus(trial)
+                                exp.exportGovernor(trial)
                                 console.log('3')
                                 return false; // Skip feedback
                             }

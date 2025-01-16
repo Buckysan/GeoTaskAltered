@@ -46,11 +46,13 @@ class Structure {
         this.timeStart = typeof args.timeStart === 'undefined' ? (new Date).getTime(): args.timeStart;
         this.scenarioObject = typeof args.scenarioObject === 'undefined'? [] : args.scenarioObject;
         this.participantID = typeof args.participantID === 'undefined'? "NO_ID" : args.participantID;
+        this.feedback = typeof args.feedback === 'undefined'? false : args.feedback;
         this.corrects = typeof args.corrects === 'undefined'? [] : args.corrects;
         this.complete = typeof args.complete === 'undefined'? false : args.complete;
         this.expConditionOrder = typeof args.expConditionOrder === 'undefined' ? [] : args.expConditionOrder;
         this.trueConditions = [];
         this.difficulties = [];
+        this.reasoning = [];
         this.differentials = [];
         this.trials = typeof args.scenarioObject === 'undefined' ? [] : Structure.addTrials(this.scenarioObject, this.numOfSubtrials*this.numOfTrials, this.expConditionOrder, this.numOfSubtrials, this.corrects);
     }
@@ -188,6 +190,18 @@ class Structure {
         this.difficulties.push(trial.response);
     }
 
+    saveReasoningStrategy(trial)
+    {
+        this.reasoning = trial.response
+    }
+
+    
+    saveFeedbackStatus(trial)
+    {
+        this.currentSubtrial.feedbackGiven = trial.feedback_given;
+        this.currentSubtrial.feedbackElegible = trial.elegible_for_feedback
+    }
+
     saveFinalDecision(trial)
     {
         //this.storePluginData(trial);
@@ -234,6 +248,8 @@ class Structure {
             this.complete = true;
         }
     }
+
+    save
 
     saveDebrief(trial)
     {
@@ -285,6 +301,7 @@ class Structure {
         // Data about the participant
         let participantData = {
             id: data.participantID,
+            feedbackGroup: data.feedback,
             numOfScenarios: data.numOfTrials,
             completionCheck: data.complete,
             scenarioOrder: data.order,
@@ -325,14 +342,16 @@ class Structure {
     /** Return a trial squeezed into a format suitable for saving as .csv
      * @param {Trial} trial - trial object to squeeze
      * @param {int} id - id of the participant (inserted as first column)
+     * @param {boolean} feedbackGroup - whether participant is in the feedbak group
      * @returns {Object} - slim representation of trial object
      */
-    flattenTrialData(trial, id, trialNum) 
+    flattenTrialData(trial, id, feedbackGroup, trialNum) 
     {
         let out = {};
         out.trial = trial.trialID;
         out.subtrial = trial.subtrialID;
         out.participantID = id;
+        out.feedback = feedbackGroup;
         out.scenarioID = trial.id;
         out.trueCountry = this.corrects[trialNum];
         out.expCondition = trial.expCondition
@@ -343,7 +362,7 @@ class Structure {
             out.hypothesisOptions = trial.hypothesisOptions;
         }
         out.requestedInfoIdxs = trial.requestedInfo;
-        out.requestedInfoText = (trial.requestedInfo).map(i => trial.availableInfo[i-1])
+        out.requestedInfoText = (trial.requestedInfo).map(i => trial.availableInfo[i-1])//need to debug
         out.numOfRequestedInfo = trial.requestedInfo.length;
         out.availableInfo = trial.availableInfo;
         out.rts = trial.rts;
@@ -356,6 +375,8 @@ class Structure {
         out.confidence = trial.confidence;
         out.correct = out.trueCondition == out.finalDiagnosis ? 1 : 0;
         out.difficulty = this.difficulties[trialNum];
+        out.reasoning = this.reasoning[trialNum];
+        
         //let treatment = trial.treatmentPlan;
         //if (!treatment || treatment.length === 0 )
         //{
